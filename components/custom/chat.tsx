@@ -20,6 +20,7 @@ import { DropdownMenu } from "../ui/dropdown-menu";
 import { FunctionTool } from "@/app/(chat)/api/chat/route";
 import { ErrorIcon } from "./icons";
 import { Input } from "../ui/input";
+import { RecordView } from "./record-view";
 
 const IntegrationsLazy = dynamic(() => import("./integrations"), {
   loading: () => (
@@ -50,7 +51,7 @@ export function Chat({
   const [tools, setTools] = useState<ParagraphTypes[string]>([]);
   const [actions, setActions] = useState<FunctionTool[]>([]);
   //TODO: Make this be the first integration
-  const [selectedSource, setSelectedSource] = useState<string>("googledrive");
+  const [selectedSource, setSelectedSource] = useState<{name: string, type: string, icon: string | undefined}>({name: "", type: "", icon: undefined});
 
   const {
     messages,
@@ -90,6 +91,9 @@ export function Chat({
           initialToolsSelected={savedTools as string[]}
           setSelectedSourceAction={setSelectedSource}
         />
+      </div>
+      <div className="w-full pt-5 p-3">
+        <RecordView user={null} selectedSource={selectedSource} />
       </div>
       <div className="rounded-md max-w-[500px] pt-5 mx-3">
         <div className="flex flex-col justify-between h-full">

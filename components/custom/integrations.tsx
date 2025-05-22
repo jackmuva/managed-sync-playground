@@ -2,7 +2,7 @@
 
 import useParagon, { ParagraphTypes } from "@/lib/paragon/useParagon";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronDownIcon } from "./icons";
 
 import { Button } from "../ui/button";
@@ -24,7 +24,7 @@ type IntegrationTileProps = {
   selectedTools: string[];
   onToolSelectToggle: (name: string, checked: CheckedState) => void;
   onToolSelectAllToggle: (checked: CheckedState) => void;
-  setSelectedSource: (source: string) => void;
+  setSelectedSource: (source: {name: string, type: string, icon: string}) => void;
 };
 
 function IntegrationTile({
@@ -53,7 +53,7 @@ function IntegrationTile({
       <div className="border border-slate-300 dark:border-slate-700 rounded">
         <div
           className="p-4 flex items-center rounded rounded-br-none rounded-bl-none justify-between hover:bg-gray-100 dark:hover:bg-secondary cursor-pointer"
-          onClick={integrationEnabled ? () => { setSelectedSource(integration.type) } : () => { handleClick() }}
+          onClick={integrationEnabled ? () => { setSelectedSource({name: integration.name, type: integration.type, icon: integration.icon}) } : () => { handleClick() }}
         >
           <div className="flex items-center">
             <img src={integration.icon} className="w-4 h-4 mr-2" />
@@ -124,7 +124,7 @@ export default function Integrations({
   setSelectedSourceAction
 }: {
   session: { paragonUserToken?: string };
-  setSelectedSourceAction: (source: string) => void;
+  setSelectedSourceAction: (source: {name: string, type: string, icon: string}) => void;
   initialToolsSelected?: string[];
   onUpdateTools?: (tools: ParagraphTypes[string]) => void;
   onUpdateActions?: (actions: FunctionTool[]) => void;
@@ -134,12 +134,25 @@ export default function Integrations({
   );
   const integrations = paragon?.getIntegrationMetadata() ?? [];
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
+  const hasSetInitialSource = useRef(false);
 
   useEffect(() => {
     if (initialToolsSelected) {
       setSelectedTools(initialToolsSelected);
     }
   }, [initialToolsSelected]);
+  
+  useEffect(() => {
+    if (user?.authenticated && integrations.length > 0 && !hasSetInitialSource.current) {
+      hasSetInitialSource.current = true;
+      setSelectedSourceAction({
+        name: integrations[0].name,
+        type: integrations[0].type,
+        icon: integrations[0].icon
+      });
+    }
+  }, [user?.authenticated, integrations.length]);
+  
   useEffect(() => {
     if (onUpdateActions) {
       onUpdateActions(
