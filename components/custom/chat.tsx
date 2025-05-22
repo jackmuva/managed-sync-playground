@@ -31,6 +31,11 @@ const IntegrationsLazy = dynamic(() => import("./integrations"), {
   ssr: false,
 });
 
+enum ViewType {
+  SYNCED_RECORDS,
+  ACTIVITY_LOGS
+}
+
 export function Chat({
   id,
   initialMessages,
@@ -46,12 +51,13 @@ export function Chat({
 }) {
   //TODO: Change this to impersonated user
   const [systemPrompt, setSystemPrompt] = useState(
-    savedPrompt ?? "You are a helpful assistant."
+    savedPrompt ?? "user@company.com"
   );
   const [tools, setTools] = useState<ParagraphTypes[string]>([]);
   const [actions, setActions] = useState<FunctionTool[]>([]);
   //TODO: Make this be the first integration
-  const [selectedSource, setSelectedSource] = useState<{name: string, type: string, icon: string | undefined}>({name: "", type: "", icon: undefined});
+  const [selectedSource, setSelectedSource] = useState<{ name: string, type: string, icon: string | undefined }>({ name: "", type: "", icon: undefined });
+  const [view, setView] = useState<ViewType>(ViewType.SYNCED_RECORDS);
 
   const {
     messages,
@@ -79,7 +85,6 @@ export function Chat({
     useScrollToBottom<HTMLDivElement>(isLoading);
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
-  console.log(selectedSource);
 
   return (
     <div className="flex justify-between max-w-full h-[calc(100dvh-32px)] pt-12">
@@ -92,10 +97,26 @@ export function Chat({
           setSelectedSourceAction={setSelectedSource}
         />
       </div>
-      <div className="w-full pt-5 p-3">
-        <RecordView user={null} selectedSource={selectedSource} />
+      <div className="flex flex-col w-full pt-5 p-3">
+        <div className="flex space-x-1 items-center ">
+          <div className={view === ViewType.SYNCED_RECORDS ? "text-indigo-700 dark:text-indigo-300 cursor-pointer font-bold" : "cursor-pointer"}
+            onClick={() => { setView(ViewType.SYNCED_RECORDS) }}>Synced Records</div>
+          <div className="">|</div>
+          <div className={view === ViewType.ACTIVITY_LOGS ? "text-indigo-700 dark:text-indigo-300 cursor-pointer font-bold" : "cursor-pointer"}
+            onClick={() => { setView(ViewType.ACTIVITY_LOGS) }}>Activity Logs: </div>
+          <div className="font-semibold text-lg flex items-center">
+            {selectedSource.icon ? <img src={selectedSource.icon} className="ml-2 w-5 h-5 mr-2" /> : null}
+            {selectedSource.name}
+          </div>
+        </div>
+        {
+          view === ViewType.SYNCED_RECORDS ?
+            <RecordView user={null} selectedSource={selectedSource} />
+            :
+            <></>
+        }
       </div>
-      <div className="rounded-md max-w-[500px] pt-5 mx-3">
+      <div className="rounded-md w-[900px] pt-5 mx-3">
         <div className="flex flex-col justify-between h-full">
           <div className="mb-4">
             <p className="font-semibold text-sm mb-2">Impersonate User</p>
