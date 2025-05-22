@@ -5,7 +5,7 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 
-import { user, chat, User } from "./schema";
+import { user, chat, User, File, file, activity, Activity } from "./schema";
 
 const db = drizzle(
   createClient({
@@ -143,3 +143,104 @@ export async function getChatById({ id }: { id: string }) {
     throw error;
   }
 }
+
+export async function getFilesByUserId({ id }: { id: string }): Promise<Array<File>> {
+  try {
+    return await db.select().from(file).where(eq(file.userId, id));
+  } catch (error) {
+    console.error("Failed to get user's files from database", error);
+    throw error;
+  }
+}
+
+export async function createFile({
+  id,
+  externalId,
+  name,
+  mimeType,
+  size,
+  url,
+  updatedAt,
+  userId,
+}: {
+  id: string,
+  externalId: string,
+  name: string,
+  mimeType: string,
+  size: number,
+  url: string,
+  createdAt: Date,
+  updatedAt: Date,
+  userId: string,
+}) {
+  const selectedFile = await db.select().from(file).where(eq(file.id, id));
+  try {
+    if (selectedFile.length > 0) {
+      return await db
+        .update(file)
+        .set({
+          size: size,
+          url: url,
+          updatedAt: updatedAt
+        })
+        .where(eq(file.id, id));
+    }
+
+    return await db.insert(file).values({
+      id: id,
+      externalId: externalId,
+      name: name,
+      mimeType: mimeType,
+      size: size,
+      url: url,
+      createdAt: updatedAt,
+      updatedAt: updatedAt,
+      userId: userId,
+    });
+  } catch (error) {
+    console.error("Failed to create/update file in database");
+    throw error;
+  }
+}
+
+
+export async function getActivityByUserId({ id }: { id: string }): Promise<Array<Activity>> {
+  try {
+    return await db.select().from(activity).where(eq(activity.userId, id));
+  } catch (error) {
+    console.error("Failed to get user's activity from database", error);
+    throw error;
+  }
+}
+
+export async function createActivity({
+  id,
+  event,
+  source,
+  receivedAt,
+  data,
+  userId,
+}: {
+  id: string,
+  event: string,
+  source: string,
+  receivedAt: Date,
+  data: string,
+  userId: string,
+}) {
+  try {
+    return await db.insert(activity).values({
+      id: id,
+      event: event,
+      source: source,
+      receivedAt: receivedAt,
+      data: data,
+      userId: userId
+    });
+  } catch (error) {
+    console.error("Failed to create activity in database");
+    throw error;
+  }
+}
+
+

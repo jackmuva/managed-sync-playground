@@ -42,3 +42,52 @@ export const chat = sqliteTable(
 );
 
 export type Chat = InferSelectModel<typeof chat>;
+
+export const file = sqliteTable(
+  "File",
+  {
+    id: text("id").notNull().primaryKey(),
+    externalId: text("externalId").notNull(),
+    name: text("name").notNull(),
+    mimeType: text("mimeType").notNull(),
+    size: integer("size").notNull(),
+    url: text("url").notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+    userId: text("userId").notNull(),
+  },
+  (table) => {
+    return {
+      FileUserIdUserIdFk: foreignKey({
+        columns: [table.userId],
+        foreignColumns: [user.id],
+        name: "File_userId_User_id_fk",
+      }),
+    };
+  }
+);
+
+export type File = InferSelectModel<typeof file>;
+
+export const activity = sqliteTable(
+  "Activity",
+  {
+    id: text("id").notNull().primaryKey().$defaultFn(v4),
+    event: text("event").notNull(),
+    source: text("source").notNull(),
+    receivedAt: integer("receivedAt", { mode: "timestamp" }).notNull(),
+    data: text("data", { mode: "json" }).notNull(),
+    userId: text("userId").notNull(),
+  },
+  (table) => {
+    return {
+      ActivityUserIdUserIdFk: foreignKey({
+        columns: [table.userId],
+        foreignColumns: [user.id],
+        name: "Activity_userId_User_id_fk",
+      }),
+    };
+  }
+);
+
+export type Activity = InferSelectModel<typeof activity>;
