@@ -76,23 +76,30 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   return (
-    <div className="flex flex-col max-w-full h-[calc(100dvh-32px)] pt-12">
-      <div className="h-1/2 border-b">
-        <div className="p-3 bg-background min-w-[350px] w-96 overflow-y-scroll">
-          {/* <div className="flex items-center justify-between w-full">
+    <div className="flex justify-between max-w-full h-[calc(100dvh-32px)] pt-12">
+      <div className="p-3 bg-background min-w-[300px] w-80 overflow-y-scroll">
+        {/* <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold mt-2 mb-2 text-sm pt-4">Model</h1>
           <DropdownMenu />
         </div> */}
-          <IntegrationsLazy
-            session={session}
-            onUpdateTools={setTools}
-            onUpdateActions={setActions}
-            initialToolsSelected={savedTools as string[]}
-          />
-        </div>
+        <IntegrationsLazy
+          session={session}
+          onUpdateTools={setTools}
+          onUpdateActions={setActions}
+          initialToolsSelected={savedTools as string[]}
+        />
       </div>
-      <div className="flex-none h-1/2 rounded-md px-64 pt-5 mx-3">
+      <div className="rounded-md max-w-[500px] pt-5 mx-3">
         <div className="flex flex-col justify-between h-full">
+          <div className="mb-4">
+            <p className="font-semibold text-sm mb-2">System Instructions</p>
+            <Textarea
+              value={systemPrompt}
+              className="min-h-[24px] overflow-y-scroll rounded-lg text-base"
+              rows={3}
+              onChange={(e) => setSystemPrompt(e.target.value)}
+            />
+          </div>
           <div
             ref={messagesContainerRef}
             className="overflow-y-scroll h-full flex flex-col gap-2 pr-3"

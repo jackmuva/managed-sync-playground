@@ -55,7 +55,7 @@ function IntegrationTile({
         >
           <div className="flex items-center">
             <img src={integration.icon} className="w-4 h-4 mr-2" />
-            <p className="font-semibold">{integration.name}</p>
+            <p className="text-sm font-semibold">{integration.name}</p>
             {integrationEnabled && (
               <p className="text-xs font-semibold ml-2 bg-muted text-muted-foreground rounded-full h-5 w-5 flex items-center justify-center">
                 {
@@ -171,10 +171,7 @@ export default function Integrations({
   return (
     <div className="pt-3">
       <div className="flex items-center justify-between w-full">
-        <h1 className="font-semibold text-sm mt-2 mb-2">Integrations</h1>
-        <p className="text-sm text-muted-foreground mr-3">
-          Enabled {selectedTools.length} tools
-        </p>
+        <h1 className="font-semibold text-sm mt-2 mb-2">Sources</h1>
       </div>
       <div className="flex flex-wrap">
         {user?.authenticated ? (
