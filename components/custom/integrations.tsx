@@ -3,7 +3,6 @@
 import useParagon, { ParagraphTypes } from "@/lib/paragon/useParagon";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useEffect, useState } from "react";
-import { Checkbox } from "../ui/checkbox";
 import { ChevronDownIcon } from "./icons";
 
 import { Button } from "../ui/button";
@@ -70,8 +69,8 @@ function IntegrationTile({
           <div className="flex items-center">
             <div
               className={`rounded mr-2 p-1 px-2 inline-flex items-center bg-opacity-30 dark:bg-opacity-30 ${integrationEnabled
-                  ? "bg-green-400 dark:bg-green-400"
-                  : "bg-slate-200 dark:bg-slate-400"
+                ? "bg-green-400 dark:bg-green-400"
+                : "bg-slate-200 dark:bg-slate-400"
                 }`}
             >
               <div
@@ -80,8 +79,8 @@ function IntegrationTile({
               />
               <p
                 className={`text-xs font-semibold ${integrationEnabled
-                    ? "text-green-600 dark:text-green-500"
-                    : "text-slate-500 dark:text-slate-300"
+                  ? "text-green-600 dark:text-green-500"
+                  : "text-slate-500 dark:text-slate-300"
                   }`}
               >
                 {integrationEnabled ? "Connected" : "Not connected"}
@@ -96,68 +95,31 @@ function IntegrationTile({
         </div>
         {expanded ? (
           <div className="border-t p-4 pt-2">
-            {tools || actions ? (
-              <>
-                <div className="flex items-center space-x-2 my-2 mb-3">
-                  <Checkbox
-                    id={`${integration.type}-all`}
-                    checked={actions.every((intent) =>
-                      selectedTools.includes(intent.function.name)
-                    )}
-                    onCheckedChange={onToolSelectAllToggle}
-                  />
-                  <label
-                    htmlFor={`${integration.type}-all`}
-                    className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Select all
-                  </label>
-                </div>
-                {actions.map((intent) => {
-                  const name = intent.function.name;
-                  return (
-                    <div
-                      key={name}
-                      className="flex items-center space-x-2 my-2"
-                    >
-                      <Checkbox
-                        id={name}
-                        checked={selectedTools.includes(name)}
-                        onCheckedChange={(checked) =>
-                          onToolSelectToggle(name, checked)
-                        }
-                      />
-                      <label
-                        htmlFor={name}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {formatString(name)}
-                      </label>
-                    </div>
-                  );
-                })}
-                <p className="text-sm text-muted-foreground">
-                  {
-                    actions.filter((intent) =>
-                      selectedTools.includes(intent.function.name)
-                    ).length
-                  }{" "}
-                  tools selected
-                </p>
-              </>
-            ) : null}
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-3"
-              onClick={() => onConnect()}
-            >
-              Configure
-            </Button>
+            <p className="text-sm text-muted-foreground">
+              x files synced
+            </p>
+            <div className="flex flex-row space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => console.log('syncing')}
+              >
+                Enable Sync
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => onConnect()}
+              >
+                Configure
+              </Button>
+            </div>
           </div>
         ) : null}
       </div>
-    </div>
+    </div >
   );
 }
 
