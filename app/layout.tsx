@@ -9,8 +9,8 @@ import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Actions Playground",
-  description: "Actions Playground using the AI SDK.",
+  title: "SyncKit Playground",
+  description: "SyncKit Playground using the AI SDK.",
 };
 
 export const fetchCache = "force-no-store";

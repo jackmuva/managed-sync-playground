@@ -24,6 +24,7 @@ type IntegrationTileProps = {
   selectedTools: string[];
   onToolSelectToggle: (name: string, checked: CheckedState) => void;
   onToolSelectAllToggle: (checked: CheckedState) => void;
+  setSelectedSource: (source: string) => void;
 };
 
 function IntegrationTile({
@@ -35,6 +36,7 @@ function IntegrationTile({
   onConnect,
   onToolSelectAllToggle,
   onToolSelectToggle,
+  setSelectedSource,
 }: IntegrationTileProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -51,20 +53,11 @@ function IntegrationTile({
       <div className="border border-slate-300 dark:border-slate-700 rounded">
         <div
           className="p-4 flex items-center rounded rounded-br-none rounded-bl-none justify-between hover:bg-gray-100 dark:hover:bg-secondary cursor-pointer"
-          onClick={handleClick}
+          onClick={integrationEnabled ? () => { setSelectedSource(integration.type) } : () => { handleClick() }}
         >
           <div className="flex items-center">
             <img src={integration.icon} className="w-4 h-4 mr-2" />
             <p className="text-sm font-semibold">{integration.name}</p>
-            {integrationEnabled && (
-              <p className="text-xs font-semibold ml-2 bg-muted text-muted-foreground rounded-full h-5 w-5 flex items-center justify-center">
-                {
-                  actions.filter((intent) =>
-                    selectedTools.includes(intent.function.name)
-                  ).length
-                }
-              </p>
-            )}
           </div>
           <div className="flex items-center">
             <div
@@ -83,12 +76,12 @@ function IntegrationTile({
                   : "text-slate-500 dark:text-slate-300"
                   }`}
               >
-                {integrationEnabled ? "Connected" : "Not connected"}
+                {integrationEnabled ? "Synced" : "Not Synced"}
               </p>
             </div>
             {integrationEnabled ? (
-              <div className={expanded ? "rotate-180" : ""}>
-                <ChevronDownIcon />
+              <div className={expanded ? "bg-muted hover:bg-white text-muted-foreground rounded-full justify-center items-center rotate-180" : "bg-muted hover:bg-white text-muted-foreground rounded-full justify-center items-center"} onClick={handleClick}>
+                <ChevronDownIcon size={20} />
               </div>
             ) : null}
           </div>
@@ -98,11 +91,11 @@ function IntegrationTile({
             <p className="text-sm text-muted-foreground">
               x files synced
             </p>
-            <div className="flex flex-row space-x-2">
+            <div className="flex justify-between flex-row space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-3"
+                className="mt-3 text-white bg-indigo-700"
                 onClick={() => console.log('syncing')}
               >
                 Enable Sync
@@ -128,8 +121,10 @@ export default function Integrations({
   initialToolsSelected,
   onUpdateTools,
   onUpdateActions,
+  setSelectedSourceAction
 }: {
   session: { paragonUserToken?: string };
+  setSelectedSourceAction: (source: string) => void;
   initialToolsSelected?: string[];
   onUpdateTools?: (tools: ParagraphTypes[string]) => void;
   onUpdateActions?: (actions: FunctionTool[]) => void;
@@ -139,7 +134,6 @@ export default function Integrations({
   );
   const integrations = paragon?.getIntegrationMetadata() ?? [];
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
-  const [selectedActions, setSelectedActions] = useState<string[]>([]);
 
   useEffect(() => {
     if (initialToolsSelected) {
@@ -223,6 +217,7 @@ export default function Integrations({
                 }
                 key={integration.type}
                 actions={actionTypes[integration.type]}
+                setSelectedSource={setSelectedSourceAction}
               />
             ))
         ) : (

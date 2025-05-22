@@ -19,6 +19,7 @@ import { ParagraphTypes } from "@/lib/paragon/useParagon";
 import { DropdownMenu } from "../ui/dropdown-menu";
 import { FunctionTool } from "@/app/(chat)/api/chat/route";
 import { ErrorIcon } from "./icons";
+import { Input } from "../ui/input";
 
 const IntegrationsLazy = dynamic(() => import("./integrations"), {
   loading: () => (
@@ -42,11 +43,14 @@ export function Chat({
   savedPrompt?: string | null;
   savedTools?: string[] | null;
 }) {
+  //TODO: Change this to impersonated user
   const [systemPrompt, setSystemPrompt] = useState(
     savedPrompt ?? "You are a helpful assistant."
   );
   const [tools, setTools] = useState<ParagraphTypes[string]>([]);
   const [actions, setActions] = useState<FunctionTool[]>([]);
+  //TODO: Make this be the first integration
+  const [selectedSource, setSelectedSource] = useState<string>("googledrive");
 
   const {
     messages,
@@ -74,29 +78,26 @@ export function Chat({
     useScrollToBottom<HTMLDivElement>(isLoading);
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  console.log(selectedSource);
 
   return (
     <div className="flex justify-between max-w-full h-[calc(100dvh-32px)] pt-12">
       <div className="p-3 bg-background min-w-[300px] w-80 overflow-y-scroll">
-        {/* <div className="flex items-center justify-between w-full">
-          <h1 className="font-semibold mt-2 mb-2 text-sm pt-4">Model</h1>
-          <DropdownMenu />
-        </div> */}
         <IntegrationsLazy
           session={session}
           onUpdateTools={setTools}
           onUpdateActions={setActions}
           initialToolsSelected={savedTools as string[]}
+          setSelectedSourceAction={setSelectedSource}
         />
       </div>
       <div className="rounded-md max-w-[500px] pt-5 mx-3">
         <div className="flex flex-col justify-between h-full">
           <div className="mb-4">
-            <p className="font-semibold text-sm mb-2">System Instructions</p>
-            <Textarea
+            <p className="font-semibold text-sm mb-2">Impersonate User</p>
+            <Input
               value={systemPrompt}
               className="min-h-[24px] overflow-y-scroll rounded-lg text-base"
-              rows={3}
               onChange={(e) => setSystemPrompt(e.target.value)}
             />
           </div>
