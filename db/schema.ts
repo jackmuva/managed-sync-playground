@@ -43,31 +43,29 @@ export const chat = sqliteTable(
 
 export type Chat = InferSelectModel<typeof chat>;
 
-export const file = sqliteTable(
-  "File",
+export const syncedObject = sqliteTable(
+  "SyncedObject",
   {
     id: text("id").notNull().primaryKey(),
     externalId: text("externalId").notNull(),
-    name: text("name").notNull(),
-    mimeType: text("mimeType").notNull(),
-    size: integer("size").notNull(),
-    url: text("url").notNull(),
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+    source: text("source").notNull(),
+    data: text("data", { mode: "json" }).notNull(),
     userId: text("userId").notNull(),
   },
   (table) => {
     return {
-      FileUserIdUserIdFk: foreignKey({
+      SyncedObjectUserIdUserIdFk: foreignKey({
         columns: [table.userId],
         foreignColumns: [user.id],
-        name: "File_userId_User_id_fk",
+        name: "SyncedObject_userId_User_id_fk",
       }),
     };
   }
 );
 
-export type File = InferSelectModel<typeof file>;
+export type SyncedObject = InferSelectModel<typeof syncedObject>;
 
 export const activity = sqliteTable(
   "Activity",

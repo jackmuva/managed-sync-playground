@@ -2,10 +2,10 @@
 
 import { createClient } from "@libsql/client";
 import { genSaltSync, hashSync } from "bcrypt-ts";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 
-import { user, chat, User, File, file, activity, Activity } from "./schema";
+import { user, chat, User, SyncedObject, syncedObject, activity, Activity } from "./schema";
 
 const db = drizzle(
   createClient({
@@ -144,65 +144,58 @@ export async function getChatById({ id }: { id: string }) {
   }
 }
 
-export async function getFilesByUserId({ id }: { id: string }): Promise<Array<File>> {
+export async function getSyncedObjectByUserIdAndSource({ id, source }: { id: string, source: string }): Promise<Array<SyncedObject>> {
   try {
-    return await db.select().from(file).where(eq(file.userId, id));
+    return await db.select().from(syncedObject).where(and(eq(syncedObject.userId, id), eq(syncedObject.source, source)));
   } catch (error) {
-    console.error("Failed to get user's files from database", error);
+    console.error("Failed to get user's synced objects from database", error);
     throw error;
   }
 }
 
-export async function createFile({
+export async function createSyncedObject({
   id,
   externalId,
-  name,
-  mimeType,
-  size,
-  url,
+  createdAt,
   updatedAt,
   userId,
+  data,
+  source
 }: {
   id: string,
   externalId: string,
-  name: string,
-  mimeType: string,
-  size: number,
-  url: string,
   createdAt: Date,
   updatedAt: Date,
   userId: string,
+  data: string,
+  source: string
 }) {
-  const selectedFile = await db.select().from(file).where(eq(file.id, id));
+  const selectedSyncedObject = await db.select().from(syncedObject).where(eq(syncedObject.id, id));
   try {
-    if (selectedFile.length > 0) {
+    if (selectedSyncedObject.length > 0) {
       return await db
-        .update(file)
+        .update(syncedObject)
         .set({
-          size: size,
-          url: url,
+          data: data,
           updatedAt: updatedAt
         })
-        .where(eq(file.id, id));
+        .where(eq(syncedObject.id, id));
     }
 
-    return await db.insert(file).values({
+    return await db.insert(syncedObject).values({
       id: id,
       externalId: externalId,
-      name: name,
-      mimeType: mimeType,
-      size: size,
-      url: url,
-      createdAt: updatedAt,
+      createdAt: createdAt,
       updatedAt: updatedAt,
       userId: userId,
+      data: data,
+      source: source
     });
   } catch (error) {
-    console.error("Failed to create/update file in database");
+    console.error("Failed to create/update synced object in database");
     throw error;
   }
 }
-
 
 export async function getActivityByUserId({ id }: { id: string }): Promise<Array<Activity>> {
   try {

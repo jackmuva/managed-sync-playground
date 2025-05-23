@@ -1,7 +1,8 @@
 import { userWithToken } from "@/app/(auth)/auth";
-import { getFilesByUserId, getUser } from "@/db/queries";
+import { getSyncedObjectByUserIdAndSource, getUser } from "@/db/queries";
 
 export async function GET() {
+	//TODO: get source from request
 	const session = await userWithToken();
 	if (!session || !session.user) {
 		return Response.json("Unauthorized!", { status: 401 });
@@ -12,6 +13,6 @@ export async function GET() {
 		return Response.json("No user found", { status: 500 });
 	}
 
-	const records = await getFilesByUserId({ id: user[0].id });
+	const records = await getSyncedObjectByUserIdAndSource({ id: user[0].id, source: "googledrive" });
 	return Response.json(records);
 }
