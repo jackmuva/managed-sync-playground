@@ -2,6 +2,7 @@ import { userWithToken } from "@/app/(auth)/auth";
 import { getSyncedObjectByUserIdAndSource, getUser } from "@/db/queries";
 
 export async function GET() {
+	console.log('here in records');
 	//TODO: get source from request
 	const session = await userWithToken();
 	if (!session || !session.user) {

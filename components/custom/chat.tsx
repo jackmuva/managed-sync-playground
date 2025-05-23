@@ -11,7 +11,7 @@ import {
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
 
 import { MultimodalInput } from "./multimodal-input";
-import { ExtendedSession } from "@/app/(auth)/auth";
+import { ExtendedSession, userWithToken } from "@/app/(auth)/auth";
 import { Textarea } from "../ui/textarea";
 import { LoadingSkeleton } from "./integrations";
 import dynamic from "next/dynamic";
@@ -20,7 +20,7 @@ import { DropdownMenu } from "../ui/dropdown-menu";
 import { FunctionTool } from "@/app/(chat)/api/chat/route";
 import { ErrorIcon } from "./icons";
 import { Input } from "../ui/input";
-import { RecordView } from "./record-view";
+import { SyncedObjectsView } from "./synced-objects-view";
 
 const IntegrationsLazy = dynamic(() => import("./integrations"), {
   loading: () => (
@@ -45,7 +45,7 @@ export function Chat({
 }: {
   id: string;
   initialMessages: Array<Message>;
-  session: { paragonUserToken?: string };
+  session: { user: any, paragonUserToken?: string };
   savedPrompt?: string | null;
   savedTools?: string[] | null;
 }) {
@@ -111,7 +111,7 @@ export function Chat({
         </div>
         {
           view === ViewType.SYNCED_RECORDS ?
-            <RecordView user={null} selectedSource={selectedSource} />
+            <SyncedObjectsView user={session} selectedSource={selectedSource} />
             :
             <></>
         }
