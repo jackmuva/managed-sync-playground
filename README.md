@@ -1,5 +1,5 @@
-# SyncKit Playground
+# Managed Sync Playground
 
-Try SyncKit in the Playground, a sandbox to test the Sync and Permissions API's 
+Try Managed Sync in the Playground, a sandbox to test the Sync and Permissions API's 
 
 ## Setup

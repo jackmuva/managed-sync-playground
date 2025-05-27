@@ -111,7 +111,7 @@ export function Chat({
         </div>
         {
           view === ViewType.SYNCED_RECORDS ?
-            <SyncedObjectsView user={session} selectedSource={selectedSource} />
+            <SyncedObjectsView session={session} selectedSource={selectedSource} />
             :
             <></>
         }

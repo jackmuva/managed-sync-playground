@@ -25,7 +25,7 @@ export const Navbar = async () => {
           <div className="flex flex-row gap-2 items-center">
             <img src="/images/paragon-no-text.svg" />
             <div className="text-sm dark:text-zinc-300 flex items-center font-bold">
-              SyncKit Playground{" "}
+              Managed Sync Playground{" "}
               <span className="uppercase rounded-sm bg-slate-800 dark:bg-slate-700 text-white text-xs p-1 py-[2px] ml-2 font-bold">
                 Beta
               </span>
