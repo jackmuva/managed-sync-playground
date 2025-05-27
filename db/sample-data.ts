@@ -1,6 +1,6 @@
-import { createSyncedObject, createUser, getUser, STATIC_USER } from "./queries";
+import { createActivity, createSyncedObject, createUser, getUser, STATIC_USER } from "./queries";
 
-const sampleRecords = [
+const sampleRecordData = [
   {
     "id": "51ceacf9-6572-592e-99b8-c4ff32ad10a1",
     "external_id": "1kfrvDN3SPpY30Dli_TLphL45iiFHE-QPtsnAN5KKPpo",
@@ -31,10 +31,32 @@ const sampleRecords = [
   }
 ];
 
+const sampleActivityData = [
+  {
+    "id": "04c73f3a-bbb6-535e-bbba-a758f6256323",
+    "source": "googledrive",
+    "event": "SYNC_TRIGGERED",
+    "receivedAt": 1515829460008,
+    "data": {
+      "pipeline": "files"
+    }
+  },
+  {
+    "id": "123abuea-bbb6-535e-bbba-a758f6256wei",
+    "event": "sync_complete",
+    "source": "googledrive",
+    "receivedAt": 1515802745476,
+    "data": {
+      "model": "File",
+      "synced_at": "2025-03-08T11:59:00Z",
+      "num_records": 3921
+    }
+  }
+]
+
 export async function insertSampleData() {
   console.log("Inserting sample synced objects...");
-  
-  // Ensure the static user exists and get the actual user ID
+
   let actualUserId: string;
   try {
     let user = await getUser(STATIC_USER.email);
@@ -42,7 +64,7 @@ export async function insertSampleData() {
       console.log("Creating static user...");
       await createUser(STATIC_USER.email, "static-user-password", STATIC_USER.id);
       user = await getUser(STATIC_USER.email);
-      console.log("✓ Static user created");
+      console.log("Static user created");
     } else {
       console.log("Static user already exists");
     }
@@ -52,17 +74,8 @@ export async function insertSampleData() {
     console.error("Failed to create static user:", error);
     return;
   }
-  
-  for (const record of sampleRecords) {
-    // Map schema fields
-    const id = record.id;
-    const externalId = record.external_id;
-    const createdAt = new Date(record.created_at);
-    const updatedAt = new Date(record.updated_at);
-    const userId = actualUserId;  // Use the actual user ID from database
-    const source = "googledrive";
-    
-    // Put remaining fields in data as JSON
+
+  for (const record of sampleRecordData) {
     const data = JSON.stringify({
       name: record.name,
       mime_type: record.mime_type,
@@ -71,24 +84,39 @@ export async function insertSampleData() {
       thumbnail_url: record.thumbnail_url,
       hash: record.hash
     });
-    
+
     try {
       await createSyncedObject({
-        id,
-        externalId,
-        createdAt,
-        updatedAt,
-        userId,
+        id: record.id,
+        externalId: record.external_id,
+        createdAt: new Date(record.created_at),
+        updatedAt: new Date(record.updated_at),
+        userId: actualUserId,
         data,
-        source
+        source: "googledrive"
       });
       console.log(`Inserted record: ${record.name}`);
     } catch (error) {
       console.error(`Failed to insert record ${record.name}:`, error);
     }
   }
-  
-  console.log("Sample data insertion complete!");
+
+  for (const record of sampleActivityData) {
+    try {
+      await createActivity({
+        id: record.id,
+        event: record.event,
+        source: record.source,
+        receivedAt: new Date(record.receivedAt),
+        userId: actualUserId,
+        data: JSON.stringify(record.data)
+      });
+      console.log(`Inserted record: ${record.event}`);
+    } catch (error) {
+      console.error(`Failed to insert record ${record.id}:`, error);
+    }
+    console.log("Sample data insertion complete!");
+  }
 }
 
 // Run the script if called directly
