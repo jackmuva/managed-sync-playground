@@ -33,23 +33,32 @@ export const ActivityLogView = ({ session, selectedSource }: { session: { user: 
         </thead>
         <tbody>
           {
-            activities?.map((activity) => {
-              return (
-                <React.Fragment key={activity.id}>
-                  <tr className={expandedRow.has(activity.id) ? "" : "border-b"} key={activity.id}>
-                    <td className="text-sm p-2 text-center flex flex-row space-x-1">
-                      <ChevronDown className={expandedRow.has(activity.id) ? "rotate-180" : ""} onClick={() => toggleRow(activity.id)} />
-                      {activity.id}
-                    </td>
-                    <td className="text-sm p-2 text-center overflow-clip">{activity.event}</td>
-                    <td className="text-sm p-2 text-center">{new Date(activity.receivedAt.toString()).toString().split("GMT")[0]}</td>
-                  </tr>
-                  {expandedRow.has(activity.id) &&
-                    <ActivityDropdown activity={activity} />
-                  }
-                </React.Fragment>
+            activities?.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="text-center p-2 font-semibold text-lg">
+                  no data yet
+                </td>
+              </tr>
+            ) :
+              (
+                activities?.map((activity) => {
+                  return (
+                    <React.Fragment key={activity.id}>
+                      <tr className={expandedRow.has(activity.id) ? "" : "border-b"} key={activity.id}>
+                        <td className="text-sm p-2 text-center flex flex-row space-x-1">
+                          <ChevronDown className={expandedRow.has(activity.id) ? "rotate-180" : ""} onClick={() => toggleRow(activity.id)} />
+                          {activity.id}
+                        </td>
+                        <td className="text-sm p-2 text-center overflow-clip">{activity.event}</td>
+                        <td className="text-sm p-2 text-center">{new Date(activity.receivedAt.toString()).toString().split("GMT")[0]}</td>
+                      </tr>
+                      {expandedRow.has(activity.id) &&
+                        <ActivityDropdown activity={activity} />
+                      }
+                    </React.Fragment>
+                  )
+                })
               )
-            })
           }
         </tbody>
       </table>

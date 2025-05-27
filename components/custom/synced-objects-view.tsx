@@ -46,24 +46,32 @@ export function SyncedObjectsView({ session, selectedSource }: { session: { user
           </thead>
           <tbody>
             {
-              syncedObjects?.map((syncedObject) => {
-                return (
-                  <React.Fragment key={syncedObject.id}>
-                    <tr className={expandedRow.has(syncedObject.id) ? "" : "border-b"} key={syncedObject.id}>
-                      <td className="text-sm p-2 text-center flex flex-row space-x-1">
-                        <ChevronDown className={expandedRow.has(syncedObject.id) ? "rotate-180" : ""} onClick={() => toggleRow(syncedObject.id)} />
-                        {syncedObject.id}
-                      </td>
-                      <td className="text-sm p-2 text-center overflow-clip">{syncedObject.externalId}</td>
-                      <td className="text-sm p-2 text-center">{new Date(syncedObject.createdAt.toString()).toString().split("GMT")[0]}</td>
-                      <td className="text-sm p-2 text-center">{new Date(syncedObject.updatedAt.toString()).toString().split("GMT")[0]}</td>
-                    </tr>
-                    {expandedRow.has(syncedObject.id) &&
-                      <SyncedObjectDropdown syncedObject={syncedObject} session={session} />
-                    }
-                  </React.Fragment>
-                )
-              })
+              syncedObjects?.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-center p-2 font-semibold text-lg">
+                    no data yet
+                  </td>
+                </tr>
+              ) : (
+                syncedObjects?.map((syncedObject) => {
+                  return (
+                    <React.Fragment key={syncedObject.id}>
+                      <tr className={expandedRow.has(syncedObject.id) ? "" : "border-b"} key={syncedObject.id}>
+                        <td className="text-sm p-2 text-center flex flex-row space-x-1">
+                          <ChevronDown className={expandedRow.has(syncedObject.id) ? "rotate-180" : ""} onClick={() => toggleRow(syncedObject.id)} />
+                          {syncedObject.id}
+                        </td>
+                        <td className="text-sm p-2 text-center overflow-clip">{syncedObject.externalId}</td>
+                        <td className="text-sm p-2 text-center">{new Date(syncedObject.createdAt.toString()).toString().split("GMT")[0]}</td>
+                        <td className="text-sm p-2 text-center">{new Date(syncedObject.updatedAt.toString()).toString().split("GMT")[0]}</td>
+                      </tr>
+                      {expandedRow.has(syncedObject.id) &&
+                        <SyncedObjectDropdown syncedObject={syncedObject} session={session} />
+                      }
+                    </React.Fragment>
+                  )
+                })
+              )
             }
           </tbody>
         </table>
