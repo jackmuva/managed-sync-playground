@@ -4,6 +4,7 @@ import * as React from "react";
 import { RotatingLines } from "react-loader-spinner";
 import { ChevronRight, CheckCircle2, XCircle, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatJson } from "@/lib/utils";
 
 interface JsonViewerProps {
   input?: object | string;
@@ -21,16 +22,6 @@ export default function JsonViewer({
   const [inputExpanded, setInputExpanded] = React.useState(false);
   const [outputExpanded, setOutputExpanded] = React.useState(false);
 
-  const formatJson = (data: object | string): string => {
-    try {
-      if (typeof data === "string") {
-        return JSON.stringify(JSON.parse(data), null, 2);
-      }
-      return JSON.stringify(data, null, 2);
-    } catch {
-      return String(data);
-    }
-  };
 
   return (
     <div className="w-full space-y-1 text-md">

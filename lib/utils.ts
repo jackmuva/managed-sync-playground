@@ -44,7 +44,7 @@ export function getLocalStorage(key: string) {
 }
 
 export function generateUUID(): string {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     const r = (Math.random() * 16) | 0;
     const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -136,3 +136,15 @@ export function getTitleFromChat(chat: Chat) {
 
   return firstMessage.content;
 }
+
+export function formatJson(data: object | string): string {
+  try {
+    if (typeof data === "string") {
+      return JSON.stringify(JSON.parse(data), null, 2);
+    }
+    return JSON.stringify(data, null, 2);
+  } catch {
+    return String(data);
+  }
+};
+
