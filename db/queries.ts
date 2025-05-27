@@ -197,9 +197,9 @@ export async function createSyncedObject({
   }
 }
 
-export async function getActivityByUserId({ id }: { id: string }): Promise<Array<Activity>> {
+export async function getActivityByUserIdAndSource({ id, source }: { id: string, source: string }): Promise<Array<Activity>> {
   try {
-    return await db.select().from(activity).where(eq(activity.userId, id));
+    return await db.select().from(activity).where(and(eq(activity.source, source), eq(activity.userId, id)));
   } catch (error) {
     console.error("Failed to get user's activity from database", error);
     throw error;

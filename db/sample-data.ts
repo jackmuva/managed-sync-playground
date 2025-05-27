@@ -35,7 +35,7 @@ const sampleActivityData = [
   {
     "id": "04c73f3a-bbb6-535e-bbba-a758f6256323",
     "source": "googledrive",
-    "event": "SYNC_TRIGGERED",
+    "event": "sync_triggered",
     "receivedAt": 1515829460008,
     "data": {
       "pipeline": "files"

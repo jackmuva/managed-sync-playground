@@ -32,7 +32,7 @@ export const SyncedObjectDropdown = ({ syncedObject, session }: { syncedObject: 
         <div className="flex space-x-0">
           <div className="basis-2/3">
             <div className="font-semibold">Data: </div>
-            <pre className="outline outline-offset-4 rounded-md m-4 p-2 whitespace-pre-wrap break-all text-xs bg-muted border-b">
+            <pre className="border border-slate-300 dark:border-slate-700 rounded m-4 p-2 whitespace-pre-wrap break-all text-xs bg-muted border-b">
               {formatJson(syncedObject.data?.toString() ?? "no data")}
             </pre>
           </div>
@@ -46,7 +46,7 @@ export const SyncedObjectDropdown = ({ syncedObject, session }: { syncedObject: 
             >
               Check Permissions
             </Button>
-            <pre className="w-full h-full outline outline-offset-4 rounded-md m-4 p-2 whitespace-pre-wrap break-all text-xs bg-muted border-b">
+            <pre className="w-full h-full border border-slate-300 dark:border-slate-700 rounded m-4 p-2 whitespace-pre-wrap break-all text-xs bg-muted border-b">
               {permissionsState.isLoading ? (
                 <div className="flex flex-col">
                   {[44, 32, 28, 52].map((item) => (

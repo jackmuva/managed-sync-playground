@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 import { SyncedObject } from "@/db/schema";
@@ -48,7 +48,7 @@ export function SyncedObjectsView({ session, selectedSource }: { session: { user
             {
               syncedObjects?.map((syncedObject) => {
                 return (
-                  <>
+                  <React.Fragment key={syncedObject.id}>
                     <tr className={expandedRow.has(syncedObject.id) ? "" : "border-b"} key={syncedObject.id}>
                       <td className="text-sm p-2 text-center flex flex-row space-x-1">
                         <ChevronDown className={expandedRow.has(syncedObject.id) ? "rotate-180" : ""} onClick={() => toggleRow(syncedObject.id)} />
@@ -61,7 +61,7 @@ export function SyncedObjectsView({ session, selectedSource }: { session: { user
                     {expandedRow.has(syncedObject.id) &&
                       <SyncedObjectDropdown syncedObject={syncedObject} session={session} />
                     }
-                  </>
+                  </React.Fragment>
                 )
               })
             }
