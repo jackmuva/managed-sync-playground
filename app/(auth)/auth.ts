@@ -111,7 +111,7 @@ export const auth = userWithToken;
   Takes a string containing the PEM encoded key, and returns a Promise
   that will resolve to a CryptoKey representing the private key.
   */
-async function importPrivateKey(pem: string) {
+export async function importPrivateKey(pem: string) {
   // Replace encoded newlines with actual newlines
   pem = pem.replace(/\\n/g, "\n");
 

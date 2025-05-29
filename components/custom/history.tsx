@@ -179,7 +179,7 @@ export const History = ({ user }: { user: object | undefined | null }) => {
                       asChild
                     >
                       <Link
-                        href={`/chat/${chat.id}`}
+                        href={`/rag/${chat.id}`}
                         className="text-ellipsis overflow-hidden text-left py-2 pl-2 rounded-lg outline-zinc-900"
                         onClick={() => setIsHistoryVisible(false)}
                       >

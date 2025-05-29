@@ -206,15 +206,29 @@ export async function getActivityByUserIdAndSource({ id, source }: { id: string,
   }
 }
 
+export async function getSyncTriggerByUserIdAndSource({ id, source }: { id: string, source: string }): Promise<Array<Activity>> {
+  try {
+    return await db.select().from(activity)
+      .where(and(
+        eq(activity.event, "sync_triggered"),
+        eq(activity.source, source),
+        eq(activity.userId, id)))
+      .orderBy(desc(activity.receivedAt))
+      .limit(1);
+  } catch (error) {
+    console.error("Failed to get trigger activity from database", error);
+    throw error;
+  }
+}
+
+
 export async function createActivity({
-  id,
   event,
   source,
   receivedAt,
   data,
   userId,
 }: {
-  id: string,
   event: string,
   source: string,
   receivedAt: Date,
@@ -223,7 +237,6 @@ export async function createActivity({
 }) {
   try {
     return await db.insert(activity).values({
-      id: id,
       event: event,
       source: source,
       receivedAt: receivedAt,

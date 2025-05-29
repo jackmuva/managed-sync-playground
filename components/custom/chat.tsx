@@ -52,12 +52,11 @@ export function Chat({
   savedTools?: string[] | null;
 }) {
   //TODO: Change this to impersonated user
-  const [systemPrompt, setSystemPrompt] = useState(
+  const [impersonatedUser, setImpersonatedUser] = useState(
     savedPrompt ?? "user@company.com"
   );
   const [tools, setTools] = useState<ParagraphTypes[string]>([]);
   const [actions, setActions] = useState<FunctionTool[]>([]);
-  //TODO: Make this be the first integration
   const [selectedSource, setSelectedSource] = useState<{ name: string, type: string, icon: string | undefined }>({ name: "", type: "", icon: undefined });
   const [view, setView] = useState<ViewType>(ViewType.SYNCED_RECORDS);
 
@@ -72,10 +71,10 @@ export function Chat({
     error,
     reload,
   } = useChat({
+    api: '/api/rag',
     body: {
       id,
-      systemPrompt,
-      actions,
+      impersonatedUser,
     },
     initialMessages,
     onFinish: () => {
@@ -124,9 +123,9 @@ export function Chat({
           <div className="mb-4">
             <p className="font-semibold text-sm mb-2">Impersonate User</p>
             <Input
-              value={systemPrompt}
+              value={impersonatedUser}
               className="min-h-[24px] overflow-y-scroll rounded-lg text-base"
-              onChange={(e) => setSystemPrompt(e.target.value)}
+              onChange={(e) => setImpersonatedUser(e.target.value)}
             />
           </div>
           <div
