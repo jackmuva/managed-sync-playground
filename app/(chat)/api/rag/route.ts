@@ -28,7 +28,6 @@ export async function POST(request: Request) {
 		}
 	}
 	messages.push(ragContext.message);
-	console.log(messages);
 	const coreMessages = convertToCoreMessages(messages);
 	return createDataStreamResponse({
 		execute(dataStream: DataStreamWriter) {

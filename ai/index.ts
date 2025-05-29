@@ -65,14 +65,15 @@ const retrieveContext = async (query: string, session: ExtendedSession, imperson
     body: JSON.stringify({
       query: query,
       max_num_results: 5,
-      //FIX: fix filter
-      //filters: [
-      //  {
-      //    type: "eq",
-      //    key: "folder",
-      //    value: session.user.id + "/",
-      //  },
-      //]
+      ranking_options: {
+        score_threshold: 0.3
+      },
+      filters: {
+        type: "eq",
+        key: "folder",
+        value: session.user.id + "/",
+      },
+
     }),
   });
 
