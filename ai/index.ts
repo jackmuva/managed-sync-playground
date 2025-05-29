@@ -112,15 +112,20 @@ const enforcePermissionsOnContext = async (contexts: Array<any>, impersonatedUse
   //const permObjects: Array<any> = permResponse.objects;
   //
   //TODO: Swap this chunk code out when permission api is ready
-  const permObjects = [{ id: "developers.cloudflare.com_1748454679157.html" }];
+  const permObjects = [
+    { id: "developers.cloudflare.com_autorag_.md" },
+    { id: "developers.cloudflare.com_autorag_concepts_.md" },
+    { id: "developers.cloudflare.com_autorag_concepts_how-autorag-works_.md" },
+    { id: "developers.cloudflare.com_autorag_concepts_what-is-rag_.md" },
+    { id: "developers.cloudflare.com_autorag_configuration_.md" },
+  ];
 
   const permSet = new Set(permObjects.map((obj) => {
     return obj.id;
   }));
 
-  //FIX: robust implementation of gettin filename
-  //console.log(permSet);
-  //console.log(contexts[1].filename.split("/").at(-1))
+  //FIX: robust implementation of getting object id
   const allowedContext = contexts.filter((context) => permSet.has(context.filename.split("/").at(-1)));
+  console.log(allowedContext);
   return allowedContext;
 }
