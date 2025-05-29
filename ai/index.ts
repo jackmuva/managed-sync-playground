@@ -113,11 +113,11 @@ const enforcePermissionsOnContext = async (contexts: Array<any>, impersonatedUse
   //
   //TODO: Swap this chunk code out when permission api is ready
   const permObjects = [
-    { id: "developers.cloudflare.com_autorag_.md" },
-    { id: "developers.cloudflare.com_autorag_concepts_.md" },
-    { id: "developers.cloudflare.com_autorag_concepts_how-autorag-works_.md" },
-    { id: "developers.cloudflare.com_autorag_concepts_what-is-rag_.md" },
-    { id: "developers.cloudflare.com_autorag_configuration_.md" },
+    //{ id: "developers.cloudflare.com_autorag_.md" },
+    //{ id: "developers.cloudflare.com_autorag_concepts_.md" },
+    //{ id: "developers.cloudflare.com_autorag_concepts_how-autorag-works_.md" },
+    //{ id: "developers.cloudflare.com_autorag_concepts_what-is-rag_.md" },
+    //{ id: "developers.cloudflare.com_autorag_configuration_.md" },
   ];
 
   const permSet = new Set(permObjects.map((obj) => {

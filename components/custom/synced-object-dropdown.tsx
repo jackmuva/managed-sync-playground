@@ -59,7 +59,7 @@ export const SyncedObjectDropdown = ({ syncedObject, session }: { syncedObject: 
                 </div>
               ) : (
                 <>
-                  {formatJson(permissionsState.data?.toString() ?? "{\"users\": [{\"email\":\"jack.mu@useparagon.com\"}]}")}
+                  {formatJson(permissionsState.data?.toString() ?? "{\"users\": [{\"email\":\"playground.local-static-user\"}]}")}
                 </>
               )
               }
