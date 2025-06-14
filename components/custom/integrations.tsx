@@ -24,7 +24,7 @@ type IntegrationTileProps = {
   selectedTools: string[];
   onToolSelectToggle: (name: string, checked: CheckedState) => void;
   onToolSelectAllToggle: (checked: CheckedState) => void;
-  setSelectedSource: (source: {name: string, type: string, icon: string}) => void;
+  setSelectedSource: (source: { name: string, type: string, icon: string }) => void;
 };
 
 function IntegrationTile({
@@ -48,12 +48,23 @@ function IntegrationTile({
     }
   };
 
+  const triggerSyncPipeline = async (integration: string): Promise<string> => {
+    const req = await fetch(`${window.location.host}/api/sync/trigger?integration=${integration}`, {
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+    const res = await req.json();
+
+    return res.message;
+  }
+
   return (
     <div className="w-full mb-2 mr-2 rounded-lg" key={integration.type}>
       <div className="border border-slate-300 dark:border-slate-700 rounded">
         <div
           className="p-4 flex items-center rounded rounded-br-none rounded-bl-none justify-between hover:bg-gray-100 dark:hover:bg-secondary cursor-pointer"
-          onClick={integrationEnabled ? () => { setSelectedSource({name: integration.name, type: integration.type, icon: integration.icon}) } : () => { handleClick() }}
+          onClick={integrationEnabled ? () => { setSelectedSource({ name: integration.name, type: integration.type, icon: integration.icon }) } : () => { handleClick() }}
         >
           <div className="flex items-center">
             <img src={integration.icon} className="w-4 h-4 mr-2" />
@@ -96,7 +107,7 @@ function IntegrationTile({
                 variant="outline"
                 size="sm"
                 className="mt-3 text-white bg-indigo-700"
-                onClick={() => console.log('syncing')}
+                onClick={() => triggerSyncPipeline(integration.type)}
               >
                 Enable Sync
               </Button>
@@ -124,7 +135,7 @@ export default function Integrations({
   setSelectedSourceAction
 }: {
   session: { paragonUserToken?: string };
-  setSelectedSourceAction: (source: {name: string, type: string, icon: string}) => void;
+  setSelectedSourceAction: (source: { name: string, type: string, icon: string }) => void;
   initialToolsSelected?: string[];
   onUpdateTools?: (tools: ParagraphTypes[string]) => void;
   onUpdateActions?: (actions: FunctionTool[]) => void;
@@ -141,7 +152,7 @@ export default function Integrations({
       setSelectedTools(initialToolsSelected);
     }
   }, [initialToolsSelected]);
-  
+
   useEffect(() => {
     if (user?.authenticated && integrations.length > 0 && !hasSetInitialSource.current) {
       hasSetInitialSource.current = true;
@@ -152,7 +163,7 @@ export default function Integrations({
       });
     }
   }, [user?.authenticated, integrations.length]);
-  
+
   useEffect(() => {
     if (onUpdateActions) {
       onUpdateActions(

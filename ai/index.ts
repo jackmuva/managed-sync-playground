@@ -95,30 +95,29 @@ const retrieveContext = async (query: string, session: ExtendedSession, imperson
 }
 
 const enforcePermissionsOnContext = async (contexts: Array<any>, impersonatedUser: string): Promise<Array<any>> => {
-  //NOTE: may not be the best endpoint to use, depending on how many objects a user may have access to
-  //const permRequest = await fetch(process.env.MANAGED_SYNC_URL + "/permissions/list-objects", {
-  //  method: "POST",
-  //  headers: {
-  //    "Authorization": `Bearer ${session.paragonUserToken}`,
-  //    "Content-Type": "application/json",
-  //  },
-  //  body: JSON.stringify({
-  //    user: {
-  //      id: impersonatedUser 
-  //    }
-  //  }),
-  //});
-  //const permResponse = await permRequest.json();
-  //const permObjects: Array<any> = permResponse.objects;
+  //TODO: Swap this with the batch permissions check when it's ready
+  const permRequest = await fetch(process.env.MANAGED_SYNC_URL + "/permissions/list-objects", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.MANAGED_SYNC_JWT}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user: {
+        id: impersonatedUser
+      }
+    }),
+  });
+  const permResponse = await permRequest.json();
+  const permObjects: Array<any> = permResponse.objects;
   //
-  //TODO: Swap this chunk code out when permission api is ready
-  const permObjects = [
-    //{ id: "developers.cloudflare.com_autorag_.md" },
-    //{ id: "developers.cloudflare.com_autorag_concepts_.md" },
-    //{ id: "developers.cloudflare.com_autorag_concepts_how-autorag-works_.md" },
-    //{ id: "developers.cloudflare.com_autorag_concepts_what-is-rag_.md" },
-    //{ id: "developers.cloudflare.com_autorag_configuration_.md" },
-  ];
+  //const permObjects = [
+  //  //{ id: "developers.cloudflare.com_autorag_.md" },
+  //  //{ id: "developers.cloudflare.com_autorag_concepts_.md" },
+  //  //{ id: "developers.cloudflare.com_autorag_concepts_how-autorag-works_.md" },
+  //  //{ id: "developers.cloudflare.com_autorag_concepts_what-is-rag_.md" },
+  //  //{ id: "developers.cloudflare.com_autorag_configuration_.md" },
+  //];
 
   const permSet = new Set(permObjects.map((obj) => {
     return obj.id;
