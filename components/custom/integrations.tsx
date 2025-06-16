@@ -7,6 +7,9 @@ import { ChevronDownIcon } from "./icons";
 
 import { Button } from "../ui/button";
 import { FunctionTool } from "@/app/(chat)/api/chat/route";
+import { toast } from "sonner";
+import { formatJson } from "@/lib/utils";
+import { ArrowBigDownDash, SquareActivity, Zap } from "lucide-react";
 
 type IntegrationTileProps = {
   integration: {
@@ -64,11 +67,11 @@ function IntegrationTile({
       },
     });
     const res = await req.json();
-
-    return res.message;
+    toast(`Sync Pipeline for ${integration}: ${res.message}`);
   }
 
   const triggerDataPullWebhook = async (integration: string): Promise<void> => {
+    toast(`Pulling Records for: ${integration}`);
     const req = await fetch(`${window.location.href}/api/webhook`, {
       method: "POST",
       headers: {
@@ -89,7 +92,18 @@ function IntegrationTile({
     });
     const res = await req.json();
 
-    console.log(res);
+    toast(`Data Pull Success: ${res.success}`);
+  }
+
+
+  const checkSyncStatus = async (integration: string): Promise<void> => {
+    const req = await fetch(`${window.location.href}/api/status?integration=${integration}`, {
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+    const res = await req.json();
+    toast(`For ${integration} Sync: ${formatJson(res.status)}`);
   }
 
   return (
@@ -135,28 +149,41 @@ function IntegrationTile({
             <div className="flex flex-col space-y-2">
               <div className="flex flex-col space-y-2 border rounded-md p-3">
                 <div className="text-sm font-semibold">Managed Sync</div>
-                <div className="flex justify-center space-x-2">
+                <div className="flex flex-col items-start">
                   <Button
-                    variant="outline"
+                    variant="link"
                     size="sm"
-                    className="text-white bg-indigo-700 w-24"
+                    className="flex space-x-1 justify-start p-0"
                     onClick={() => triggerSyncPipeline(integration.type)}
                   >
-                    Trigger Sync
+                    <Zap size={10} />
+                    <p>Trigger Sync</p>
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="link"
                     size="sm"
-                    className="text-white bg-blue-600 w-24"
+                    className="flex space-x-1 justify-start p-0"
+                    onClick={() => checkSyncStatus(integration.type)}
+                  >
+                    <SquareActivity size={10} />
+                    <p>Check Sync Status</p>
+                  </Button>
+
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="flex space-x-1 justify-start p-0"
                     onClick={() => triggerDataPullWebhook(integration.type)}
                   >
-                    Pull Data
+                    <ArrowBigDownDash size={10} />
+                    <p>Pull Data</p>
                   </Button>
+
                 </div>
               </div>
               <div className="flex">
                 <Button
-                  variant="link"
+                  variant="outline"
                   size="sm"
                   className=""
                   onClick={() => onConnect()}
