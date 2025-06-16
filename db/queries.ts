@@ -249,4 +249,31 @@ export async function createActivity({
   }
 }
 
+export async function createSyncTrigger({
+  id,
+  integration,
+  receivedAt,
+  data,
+  userId,
+}: {
+  id: string,
+  integration: string,
+  receivedAt: Date,
+  data: string,
+  userId: string,
+}) {
+  try {
+    return await db.insert(activity).values({
+      id: id,
+      event: "sync_triggered",
+      source: integration,
+      receivedAt: receivedAt,
+      data: data,
+      userId: userId
+    });
+  } catch (error) {
+    console.error("Failed to create activity in database");
+    throw error;
+  }
+}
 

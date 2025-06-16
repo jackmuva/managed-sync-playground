@@ -1,12 +1,15 @@
 import { NextRequest } from "next/server";
-import { createActivity, getSyncTriggerByUserIdAndSource } from "@/db/queries";
+import { createActivity, getSyncTriggerByUserIdAndSource, getUser } from "@/db/queries";
 import { SignJWT } from "jose";
-import { importPrivateKey } from "@/app/(auth)/auth";
+import { importPrivateKey, userWithToken } from "@/app/(auth)/auth";
 
 interface SyncWebhook {
 	event: string,
 	sync: string,
-	user: { id: string },
+	user: {
+		id: string,
+		email?: string
+	},
 	data: {
 		model: string,
 		synced_at: string,
@@ -16,6 +19,23 @@ interface SyncWebhook {
 
 export async function POST(request: NextRequest) {
 	const body: SyncWebhook = await request.json();
+
+	//NOTE:For demo purposes, we'll be triggering this manually
+	//In production, webhooks will be triggered with Managed Sync service
+	//and we'll be able to remove this session and user logic
+	const session = await userWithToken();
+	if (!session || !session.user) {
+		return Response.json("Unauthorized!", { status: 401 });
+	}
+
+	const user = await getUser(session.user.email);
+	if (user.length === 0) {
+		return Response.json("No user found", { status: 500 });
+	} else {
+		body.user.id = user[0].id;
+		body.user.email = user[0].email;
+	}
+	//////////////////////////////////
 
 	try {
 		const response = await createActivity({
@@ -54,14 +74,12 @@ export async function POST(request: NextRequest) {
 			body: JSON.stringify(syncTrigger),
 		});
 		const workerResponse = await workerRequest.json();
+		console.log(workerResponse);
 		return Response.json(workerResponse);
 	} catch (error) {
 		console.error("[WEBHOOK] failed to send to worker");
 		throw error;
 	}
-
-
-
 }
 
 const signJwt = async (userId: string): Promise<string> => {

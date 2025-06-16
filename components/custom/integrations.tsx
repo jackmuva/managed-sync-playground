@@ -25,6 +25,7 @@ type IntegrationTileProps = {
   onToolSelectToggle: (name: string, checked: CheckedState) => void;
   onToolSelectAllToggle: (checked: CheckedState) => void;
   setSelectedSource: (source: { name: string, type: string, icon: string }) => void;
+  userId: string;
 };
 
 function IntegrationTile({
@@ -37,6 +38,7 @@ function IntegrationTile({
   onToolSelectAllToggle,
   onToolSelectToggle,
   setSelectedSource,
+  userId,
 }: IntegrationTileProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -48,8 +50,15 @@ function IntegrationTile({
     }
   };
 
+  //NOTE: for demo purposes, we'll be triggering data pulls manually by hitting
+  //the webhook endpoint, rather than using the Sync API to hit the endpoint
+  //-----------------
+  //this is because our current implementation of Managed Sync is an on-prem
+  //deployment
+  //-----------------
+  //When using on cloud plan, we can use triggerSync instead of triggerWebhookDataPull
   const triggerSyncPipeline = async (integration: string): Promise<string> => {
-    const req = await fetch(`${window.location.host}/api/sync/trigger?integration=${integration}`, {
+    const req = await fetch(`${window.location.href}/api/trigger?integration=${integration}`, {
       headers: {
         "Content-Type": "application/json"
       },
@@ -57,6 +66,30 @@ function IntegrationTile({
     const res = await req.json();
 
     return res.message;
+  }
+
+  const triggerDataPullWebhook = async (integration: string): Promise<void> => {
+    const req = await fetch(`${window.location.href}/api/webhook`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: "sync_complete",
+        sync: integration,
+        user: {
+          id: userId
+        },
+        data: {
+          model: "File",
+          synced_at: new Date().toISOString(),
+          num_records: 3921
+        }
+      }),
+    });
+    const res = await req.json();
+
+    console.log(res);
   }
 
   return (
@@ -99,26 +132,38 @@ function IntegrationTile({
         </div>
         {expanded ? (
           <div className="border-t p-4 pt-2">
-            <p className="text-sm text-muted-foreground">
-              x files synced
-            </p>
-            <div className="flex justify-between flex-row space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-3 text-white bg-indigo-700"
-                onClick={() => triggerSyncPipeline(integration.type)}
-              >
-                Enable Sync
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-3"
-                onClick={() => onConnect()}
-              >
-                Configure
-              </Button>
+            <div className="flex flex-col space-y-2">
+              <div className="flex flex-col space-y-2 border rounded-md p-3">
+                <div className="text-sm font-semibold">Managed Sync</div>
+                <div className="flex justify-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-white bg-indigo-700 w-24"
+                    onClick={() => triggerSyncPipeline(integration.type)}
+                  >
+                    Trigger Sync
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-white bg-blue-600 w-24"
+                    onClick={() => triggerDataPullWebhook(integration.type)}
+                  >
+                    Pull Data
+                  </Button>
+                </div>
+              </div>
+              <div className="flex">
+                <Button
+                  variant="link"
+                  size="sm"
+                  className=""
+                  onClick={() => onConnect()}
+                >
+                  Configure
+                </Button>
+              </div>
             </div>
           </div>
         ) : null}
@@ -242,6 +287,7 @@ export default function Integrations({
                 key={integration.type}
                 actions={actionTypes[integration.type]}
                 setSelectedSource={setSelectedSourceAction}
+                userId={user.userId}
               />
             ))
         ) : (
