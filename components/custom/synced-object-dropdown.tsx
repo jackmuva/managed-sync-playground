@@ -14,7 +14,7 @@ export const SyncedObjectDropdown = ({ syncedObject, session }: { syncedObject: 
     const request = await fetch("http://localhost:4000/permissions/list-users", {
       method: "POST",
       body: JSON.stringify({
-        object: syncedObject,
+        object: syncedObject.id,
         role: "reader"
       }),
       headers: {

@@ -124,7 +124,7 @@ const enforcePermissionsOnContext = async (contexts: Array<any>, impersonatedUse
   }));
 
   //FIX: robust implementation of getting object id
-  const allowedContext = contexts.filter((context) => permSet.has(context.filename.split("/").at(-1)));
+  const allowedContext = contexts.filter((context) => permSet.has(context.filename.split("/").at(-1).split(".").at(0)));
   console.log(allowedContext);
   return allowedContext;
 }

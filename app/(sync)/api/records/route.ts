@@ -18,3 +18,13 @@ export async function GET(request: NextRequest) {
 	const records = await getSyncedObjectByUserIdAndSource({ id: user[0].id, source: source ?? "" });
 	return Response.json(records);
 }
+
+export async function POST(request: NextRequest) {
+	const user = await getUser(session.user.email);
+	if (user.length === 0) {
+		return Response.json("No user found", { status: 500 });
+	}
+
+	const records = await getSyncedObjectByUserIdAndSource({ id: user[0].id, source: source ?? "" });
+	return Response.json(records);
+}

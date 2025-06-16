@@ -23,7 +23,7 @@ export const ActivityLogView = ({ session, selectedSource }: { session: { user: 
 
   return (
     <div className="py-3">
-      <table className="w-full text-sm table-fixed">
+      <table className="w-full text-sm table-fixed overflow-y-scroll">
         <thead className="border-b bg-muted">
           <tr>
             <th className="p-2 rounded-tl-md">id</th>

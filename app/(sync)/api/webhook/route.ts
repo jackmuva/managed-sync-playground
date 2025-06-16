@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 		const workerRequest = await fetch(process.env.SYNC_BACKGROUND_WORKER_URL, {
 			method: "POST",
 			headers: { Authorization: `Bearer ${jwt}` },
-			body: JSON.stringify(syncTrigger),
+			body: JSON.stringify(syncTrigger[0]),
 		});
 		const workerResponse = await workerRequest.json();
 		console.log(workerResponse);

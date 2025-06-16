@@ -1,6 +1,6 @@
 import { Message, DataStreamWriter, createDataStreamResponse, convertToCoreMessages, streamText } from "ai";
 import { auth, userWithToken } from "@/app/(auth)/auth";
-import { deleteChatById, getChatById, saveChat } from "@/db/queries";
+import { deleteChatById, getChatById, getUser, saveChat } from "@/db/queries";
 import { customModel, invokeRagMessages } from "@/ai";
 
 export async function POST(request: Request) {
@@ -18,12 +18,13 @@ export async function POST(request: Request) {
 	if (!session) {
 		return new Response("Unauthorized", { status: 401 });
 	}
+	const user = await getUser(impersonatedUser);
 
 	//HACK:using last message to get the rag query
 	let ragContext: { sources: Array<string>, message: Message } = { sources: [], message: { id: 'x', content: "", role: "assistant" } };
 	for (let i = messages.length - 1; i >= 0; i--) {
 		if (messages[i].role === 'user') {
-			ragContext = await invokeRagMessages(messages[i].content, session, impersonatedUser);
+			ragContext = await invokeRagMessages(messages[i].content, session, user[0].id);
 			break;
 		}
 	}

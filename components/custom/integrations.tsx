@@ -60,7 +60,7 @@ function IntegrationTile({
   //deployment
   //-----------------
   //When using on cloud plan, we can use triggerSync instead of triggerWebhookDataPull
-  const triggerSyncPipeline = async (integration: string): Promise<string> => {
+  const triggerSyncPipeline = async (integration: string): Promise<void> => {
     const req = await fetch(`${window.location.href}/api/trigger?integration=${integration}`, {
       headers: {
         "Content-Type": "application/json"
@@ -71,7 +71,7 @@ function IntegrationTile({
   }
 
   const triggerDataPullWebhook = async (integration: string): Promise<void> => {
-    toast(`Pulling Records for: ${integration}`);
+    toast(`Pulling Records for: ${integration} \n We'll notify you when record data has been downloaded`);
     const req = await fetch(`${window.location.href}/api/webhook`, {
       method: "POST",
       headers: {
