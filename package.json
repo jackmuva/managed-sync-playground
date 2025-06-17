@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "pnpm db-push && next build",
+    "build": "pnpm migrate && next build",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "db-push": "drizzle-kit push",
