@@ -6,9 +6,7 @@ import {
   experimental_wrapLanguageModel as wrapLanguageModel,
 } from "ai";
 import { customMiddleware } from "./custom-middleware";
-import { randomUUID } from "crypto";
 import { generateUUID } from "@/lib/utils";
-import { ExtendedSession } from "@/app/(auth)/auth";
 
 export const customModel = ({
   type = "openai",
@@ -18,6 +16,7 @@ export const customModel = ({
   model?: string;
 }) =>
   wrapLanguageModel({
+    //@ts-ignore
     model:
       type === "openai" ? openai(model) : (anthropic(model) as LanguageModelV1),
     middleware: customMiddleware,

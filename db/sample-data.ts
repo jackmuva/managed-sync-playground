@@ -129,7 +129,7 @@ export async function insertSampleData() {
 
     try {
       await createSyncedObject({
-        id: record.id,
+        syncObjectId: record.id,
         externalId: record.external_id,
         createdAt: new Date(record.created_at),
         updatedAt: new Date(record.updated_at),
@@ -146,7 +146,6 @@ export async function insertSampleData() {
   for (const record of sampleActivityData) {
     try {
       await createActivity({
-        id: record.id,
         event: record.event,
         source: record.source,
         receivedAt: new Date(record.receivedAt),
