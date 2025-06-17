@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "pnpm migrate && next build",
+    "build": "next build",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
-    "db-push": "drizzle-kit push",
+    "turso:generate": "drizzle-kit generate --config=drizzle-turso.config.ts",
+    "turso:migrate": "drizzle-kit migrate --config=drizzle-turso.config.ts",
     "start": "next start",
     "lint": "next lint",
     "build:worker": "pnpm opennextjs-cloudflare",

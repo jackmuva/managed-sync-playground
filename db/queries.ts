@@ -4,14 +4,24 @@ import { createClient } from "@libsql/client";
 import { genSaltSync, hashSync } from "bcrypt-ts";
 import { desc, eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
+require('dotenv').config();
 
 import { user, chat, User, SyncedObject, syncedObject, activity, Activity } from "./schema";
 
-const db = drizzle(
+//HACK:make this logic more friendly for local runs without turso env vars
+let db = drizzle(
   createClient({
-    url: "file:./db.sqlite",
+    url: process.env.TURSO_DATABASE_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN,
   })
-);
+)
+if (process.env.LOCAL_DB === 'true') {
+  db = drizzle(
+    createClient({
+      url: "file:./db.sqlite",
+    })
+  );
+}
 
 export const STATIC_USER = {
   id: "playground.local-static-user",
