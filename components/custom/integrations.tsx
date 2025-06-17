@@ -133,7 +133,7 @@ function IntegrationTile({
                   : "text-slate-500 dark:text-slate-300"
                   }`}
               >
-                {integrationEnabled ? "Synced" : "Not Synced"}
+                {integrationEnabled ? "Connected" : "Disabled"}
               </p>
             </div>
             {integrationEnabled ? (

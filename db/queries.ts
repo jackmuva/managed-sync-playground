@@ -250,13 +250,13 @@ export async function createActivity({
 }
 
 export async function createSyncTrigger({
-  id,
+  syncId,
   integration,
   receivedAt,
   data,
   userId,
 }: {
-  id: string,
+  syncId: string,
   integration: string,
   receivedAt: Date,
   data: string,
@@ -264,7 +264,7 @@ export async function createSyncTrigger({
 }) {
   try {
     return await db.insert(activity).values({
-      id: id,
+      syncId: syncId,
       event: "sync_triggered",
       source: integration,
       receivedAt: receivedAt,

@@ -71,6 +71,7 @@ export const activity = sqliteTable(
   "Activity",
   {
     id: text("id").notNull().primaryKey().$defaultFn(v4),
+    syncId: text("syncId").notNull(),
     event: text("event").notNull(),
     source: text("source").notNull(),
     receivedAt: integer("receivedAt", { mode: "timestamp" }).notNull(),

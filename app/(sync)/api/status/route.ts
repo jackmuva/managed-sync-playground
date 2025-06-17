@@ -19,8 +19,9 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		const trigger = await getSyncTriggerByUserIdAndSource({ id: user[0].id, source: integration });
-		const request = await fetch(`${process.env.MANAGED_SYNC_URL}/sync/${trigger[0].id}`, {
+		const syncTrigger = await getSyncTriggerByUserIdAndSource({ id: user[0].id, source: integration });
+		console.log(syncTrigger);
+		const request = await fetch(`${process.env.MANAGED_SYNC_URL}/sync/${syncTrigger[0].syncId}`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${process.env.MANAGED_SYNC_JWT}`,
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
 		const response = await request.json();
 		console.log(response);
 
-		console.log(`[SYNC_STATUS] successfully checked: ${trigger[0].id}`);
+		console.log(`[SYNC_STATUS] successfully checked: ${syncTrigger[0].id}`);
 		return Response.json({ status: response });
 	} catch (error) {
 		console.error("[SYNC_TRIGGER] failed to create activity");

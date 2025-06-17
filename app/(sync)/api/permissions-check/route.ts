@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 			});
 		}
 
-		const request = await fetch(`${process.env.MANAGED_SYNC_URL}/permissions/${syncTrigger[0].id}/list-users`, {
+		const request = await fetch(`${process.env.MANAGED_SYNC_URL}/permissions/${syncTrigger[0].syncId}/list-users`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${process.env.MANAGED_SYNC_JWT}`,

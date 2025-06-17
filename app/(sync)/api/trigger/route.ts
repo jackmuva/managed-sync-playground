@@ -31,9 +31,11 @@ export async function GET(request: NextRequest) {
 		});
 
 		const response = await request.json();
+		console.log(response);
+		console.log(user);
 
 		const activity = await createSyncTrigger({
-			id: response.id,
+			syncId: response.id,
 			integration: integration ?? "",
 			// TODO: Check that synced_at is the time of webhook OR time of initial sync
 			receivedAt: new Date(),

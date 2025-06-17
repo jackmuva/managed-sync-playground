@@ -57,6 +57,20 @@
       "when": 1748037992119,
       "tag": "0007_jazzy_nightcrawler",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1750184560294,
+      "tag": "0008_outstanding_tigra",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1750185625841,
+      "tag": "0009_heavy_callisto",
+      "breakpoints": true
     }
   ]
 }

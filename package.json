@@ -6,6 +6,7 @@
     "dev": "next dev --turbo",
     "build": "pnpm migrate && next build",
     "migrate": "drizzle-kit migrate",
+    "generate": "drizzle-kit generate",
     "start": "next start",
     "lint": "next lint",
     "build:worker": "pnpm opennextjs-cloudflare",
