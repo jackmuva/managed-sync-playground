@@ -6,11 +6,11 @@ import { customModel, invokeRagMessages } from "@/ai";
 export async function POST(request: Request) {
 	const { id,
 		messages,
-		impersonatedUser,
+		impersonatedEmail,
 	}: {
 		id: string,
 		messages: Array<Message>,
-		impersonatedUser: string
+		impersonatedEmail: string
 	} = await request.json();
 
 	const session = await userWithToken();
@@ -18,13 +18,13 @@ export async function POST(request: Request) {
 	if (!session) {
 		return new Response("Unauthorized", { status: 401 });
 	}
-	const user = await getUser(impersonatedUser);
+	const user = await getUser(session.user?.email ?? "");
+	const impersonatedUser = await getUser(impersonatedEmail ?? "");
 
-	//HACK:using last message to get the rag query
 	let ragContext: { sources: Array<string>, message: Message } = { sources: [], message: { id: 'x', content: "", role: "assistant" } };
 	for (let i = messages.length - 1; i >= 0; i--) {
 		if (messages[i].role === 'user') {
-			ragContext = await invokeRagMessages(messages[i].content, session, user[0].id);
+			ragContext = await invokeRagMessages(messages[i].content, user[0].id, impersonatedUser.length > 0 ? impersonatedUser[0].id : "");
 			break;
 		}
 	}

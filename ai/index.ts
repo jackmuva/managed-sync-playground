@@ -35,8 +35,8 @@ interface AutoRagSearchResults {
   },
 }
 
-export const invokeRagMessages = async (query: string, session: ExtendedSession, impersonatedUser: string): Promise<{ sources: Array<string>, message: Message }> => {
-  const searchResults = await retrieveContext(query, session, impersonatedUser);
+export const invokeRagMessages = async (query: string, userId: string, impersonatedUserId: string): Promise<{ sources: Array<string>, message: Message }> => {
+  const searchResults = await retrieveContext(query, userId, impersonatedUserId);
   const messageContent = [];
   const sources = [];
   for (const context of searchResults?.result.data!) {
@@ -55,7 +55,7 @@ export const invokeRagMessages = async (query: string, session: ExtendedSession,
   return { sources: sources, message: ragMessage }
 }
 
-const retrieveContext = async (query: string, session: ExtendedSession, impersonatedUser: string): Promise<AutoRagSearchResults | null> => {
+const retrieveContext = async (query: string, userId: string, impersonatedUserId: string): Promise<AutoRagSearchResults | null> => {
   const request = await fetch(`https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/autorag/rags/${process.env.AUTORAG_NAME}/ai-search`, {
     method: "POST",
     headers: {
@@ -71,7 +71,7 @@ const retrieveContext = async (query: string, session: ExtendedSession, imperson
       filters: {
         type: "eq",
         key: "folder",
-        value: session.user.id + "/",
+        value: userId + "/",
       },
 
     }),
@@ -79,7 +79,7 @@ const retrieveContext = async (query: string, session: ExtendedSession, imperson
 
   const response: AutoRagSearchResults = await request.json();
   if (response.success) {
-    const allowedContext = await enforcePermissionsOnContext(response.result.data, impersonatedUser);
+    const allowedContext = await enforcePermissionsOnContext(response.result.data, impersonatedUserId);
     return {
       success: response.success,
       result: {
@@ -94,37 +94,28 @@ const retrieveContext = async (query: string, session: ExtendedSession, imperson
   return null;
 }
 
-const enforcePermissionsOnContext = async (contexts: Array<any>, impersonatedUser: string): Promise<Array<any>> => {
+const enforcePermissionsOnContext = async (contexts: Array<any>, impersonatedUserId: string): Promise<Array<any>> => {
   //TODO: Swap this with the batch permissions check when it's ready
-  const permRequest = await fetch(process.env.MANAGED_SYNC_URL + "/permissions/list-objects", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.MANAGED_SYNC_JWT}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      user: {
-        id: impersonatedUser
-      }
-    }),
-  });
-  const permResponse = await permRequest.json();
-  const permObjects: Array<any> = permResponse.objects;
+  //const permRequest = await fetch(process.env.MANAGED_SYNC_URL + "/permissions/list-objects", {
+  //  method: "POST",
+  //  headers: {
+  //    "Authorization": `Bearer ${process.env.MANAGED_SYNC_JWT}`,
+  //    "Content-Type": "application/json",
+  //  },
+  //  body: JSON.stringify({
+  //    user: {
+  //      id: impersonatedUserId
+  //    }
+  //  }),
+  //});
+  //const permResponse = await permRequest.json();
+  //const permObjects: Array<any> = permResponse.objects;
+  //const permSet = new Set(permObjects.map((obj) => {
+  //  return obj.id;
+  //}));
   //
-  //const permObjects = [
-  //  //{ id: "developers.cloudflare.com_autorag_.md" },
-  //  //{ id: "developers.cloudflare.com_autorag_concepts_.md" },
-  //  //{ id: "developers.cloudflare.com_autorag_concepts_how-autorag-works_.md" },
-  //  //{ id: "developers.cloudflare.com_autorag_concepts_what-is-rag_.md" },
-  //  //{ id: "developers.cloudflare.com_autorag_configuration_.md" },
-  //];
-
-  const permSet = new Set(permObjects.map((obj) => {
-    return obj.id;
-  }));
-
-  //FIX: robust implementation of getting object id
-  const allowedContext = contexts.filter((context) => permSet.has(context.filename.split("/").at(-1).split(".").at(0)));
+  //const allowedContext = contexts.filter((context) => permSet.has(context.filename.split("/").at(-1).split(".").at(0)));
+  const allowedContext = contexts;
   console.log(allowedContext);
   return allowedContext;
 }
