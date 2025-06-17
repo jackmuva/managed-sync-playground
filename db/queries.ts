@@ -154,7 +154,7 @@ export async function getSyncedObjectByUserIdAndSource({ id, source }: { id: str
 }
 
 export async function createSyncedObject({
-  id,
+  syncObjectId,
   externalId,
   createdAt,
   updatedAt,
@@ -162,7 +162,7 @@ export async function createSyncedObject({
   data,
   source
 }: {
-  id: string,
+  syncObjectId: string,
   externalId: string,
   createdAt: Date,
   updatedAt: Date,
@@ -170,7 +170,7 @@ export async function createSyncedObject({
   data: string,
   source: string
 }) {
-  const selectedSyncedObject = await db.select().from(syncedObject).where(eq(syncedObject.id, id));
+  const selectedSyncedObject = await db.select().from(syncedObject).where(eq(syncedObject.syncObjectId, syncObjectId));
   try {
     if (selectedSyncedObject.length > 0) {
       return await db
@@ -179,11 +179,11 @@ export async function createSyncedObject({
           data: data,
           updatedAt: updatedAt
         })
-        .where(eq(syncedObject.id, id));
+        .where(eq(syncedObject.syncObjectId, syncObjectId));
     }
 
     return await db.insert(syncedObject).values({
-      id: id,
+      syncObjectId: syncObjectId,
       externalId: externalId,
       createdAt: createdAt,
       updatedAt: updatedAt,

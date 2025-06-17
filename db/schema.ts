@@ -46,7 +46,8 @@ export type Chat = InferSelectModel<typeof chat>;
 export const syncedObject = sqliteTable(
   "SyncedObject",
   {
-    id: text("id").notNull().primaryKey(),
+    id: text("id").notNull().primaryKey().$defaultFn(v4),
+    syncObjectId: text("syncObjectId").notNull(),
     externalId: text("externalId").notNull(),
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
@@ -71,7 +72,7 @@ export const activity = sqliteTable(
   "Activity",
   {
     id: text("id").notNull().primaryKey().$defaultFn(v4),
-    syncId: text("syncId").notNull(),
+    syncId: text("syncId"),
     event: text("event").notNull(),
     source: text("source").notNull(),
     receivedAt: integer("receivedAt", { mode: "timestamp" }).notNull(),

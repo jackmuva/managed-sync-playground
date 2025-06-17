@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const workerResponse = await sendSyncToWorker(body.user.id, syncTrigger[0]);
-		const upsertResponse = await upsertSyncedObjects(body.user.id, syncTrigger[0].syncId, body.sync);
+		const upsertResponse = await upsertSyncedObjects(body.user.id, syncTrigger[0].syncId ?? "", body.sync);
 		return Response.json({ worker: workerResponse, metadata: upsertResponse });
 	} catch (error) {
 		console.error("[WEBHOOK] failed to send to worker");
@@ -82,7 +82,7 @@ const upsertSyncedObjects = async (user: string, syncId: string, integration: st
 	for (const data of recordResponse.data) {
 		try {
 			await createSyncedObject({
-				id: data.id,
+				syncObjectId: data.id,
 				externalId: data.external_id,
 				createdAt: new Date(data.created_at),
 				updatedAt: new Date(data.updated_at),

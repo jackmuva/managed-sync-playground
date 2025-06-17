@@ -59,7 +59,7 @@ export function SyncedObjectsView({ session, selectedSource }: { session: { user
                       <tr className={expandedRow.has(syncedObject.id) ? "" : "border-b"} key={syncedObject.id}>
                         <td className="text-sm p-2 text-center flex flex-row space-x-1">
                           <ChevronDown className={expandedRow.has(syncedObject.id) ? "rotate-180" : ""} onClick={() => toggleRow(syncedObject.id)} />
-                          {syncedObject.id}
+                          {syncedObject.syncObjectId}
                         </td>
                         <td className="text-sm p-2 text-center overflow-clip">{syncedObject.externalId}</td>
                         <td className="text-sm p-2 text-center">{new Date(syncedObject.createdAt.toString()).toString().split("GMT")[0]}</td>

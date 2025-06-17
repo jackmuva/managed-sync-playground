@@ -71,7 +71,7 @@ function IntegrationTile({
   }
 
   const triggerDataPullWebhook = async (integration: string): Promise<void> => {
-    toast(`Pulling Records for: ${integration} \n We'll notify you when record data has been downloaded`);
+    toast(`Pulling Records for ${integration} - We'll notify you when record data has been downloaded`);
     const req = await fetch(`${window.location.href}/api/webhook`, {
       method: "POST",
       headers: {
@@ -91,7 +91,7 @@ function IntegrationTile({
     });
     const res = await req.json();
 
-    toast(`Data Pull Success: ${res.success}`);
+    toast(`Data Pull Success: ${formatJson(res)}`);
   }
 
 
