@@ -66,7 +66,7 @@ export function SyncedObjectsView({ session, selectedSource }: { session: { user
                         <td className="text-sm p-2 text-center">{new Date(syncedObject.updatedAt.toString()).toString().split("GMT")[0]}</td>
                       </tr>
                       {expandedRow.has(syncedObject.id) &&
-                        <SyncedObjectDropdown syncedObject={syncedObject} session={session} />
+                        <SyncedObjectDropdown syncedObject={syncedObject} source={selectedSource.type} />
                       }
                     </React.Fragment>
                   )

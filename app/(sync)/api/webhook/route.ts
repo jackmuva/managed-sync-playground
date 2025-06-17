@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
-import { createActivity, getSyncTriggerByUserIdAndSource, getUser } from "@/db/queries";
+import { createActivity, createSyncedObject, getSyncTriggerByUserIdAndSource, getUser } from "@/db/queries";
 import { SignJWT } from "jose";
 import { importPrivateKey, userWithToken } from "@/app/(auth)/auth";
+import { Activity } from "@/db/schema";
 
 interface SyncWebhook {
 	event: string,
@@ -53,33 +54,72 @@ export async function POST(request: NextRequest) {
 	}
 
 	try {
-		// HACK: for multiple syncs, a better way to get sync id may be 
-		// to use the synced_at field if it refers to the initial sync
 		const syncTrigger = await getSyncTriggerByUserIdAndSource({ id: body.user.id, source: body.sync });
 		if (syncTrigger.length === 0) {
 			return Response.json({
 				message: `could not find trigger by this source: ${body.sync}`
 			});
 		}
-		const jwt = await signJwt(body.user.id);
-		if (!process.env.SYNC_BACKGROUND_WORKER_URL) {
-			console.error("[WEBHOOK] set SYNC_BACKGROUND_WORKER_URL");
-			return Response.json({
-				message: `no sync background worker`
-			});
-		}
-		const workerRequest = await fetch(process.env.SYNC_BACKGROUND_WORKER_URL, {
-			method: "POST",
-			headers: { Authorization: `Bearer ${jwt}` },
-			body: JSON.stringify(syncTrigger[0]),
-		});
-		const workerResponse = await workerRequest.json();
-		console.log(workerResponse);
-		return Response.json(workerResponse);
+
+		const workerResponse = await sendSyncToWorker(body.user.id, syncTrigger[0]);
+		const upsertResponse = await upsertSyncedObjects(body.user.id, syncTrigger[0].id, body.sync);
+		return Response.json({ worker: workerResponse, metadata: upsertResponse });
 	} catch (error) {
 		console.error("[WEBHOOK] failed to send to worker");
 		throw error;
 	}
+}
+
+
+const upsertSyncedObjects = async (user: string, syncId: string, integration: string, cursor?: string): Promise<Array<string>> => {
+	let erroredRecords: Array<string> = []
+
+	const recordRequest = await fetch(process.env.MANAGED_SYNC_URL + `/sync/${syncId}/records?pageSize=100&${cursor ? `cursor=${cursor}` : ""}`, {
+		method: "GET",
+		headers: { "Authorization": `Bearer ${process.env.MANAGED_SYNC_JWT}` },
+	});
+	const recordResponse = await recordRequest.json();
+	for (const data of recordResponse.data) {
+		try {
+			await createSyncedObject({
+				id: data.id,
+				externalId: data.external_id,
+				createdAt: new Date(data.created_at),
+				updatedAt: new Date(data.updated_at),
+				userId: user,
+				source: integration,
+				data: JSON.stringify({ ...data }),
+			});
+		} catch (error) {
+			erroredRecords.push(data.id);
+		}
+	}
+	if (recordResponse.paging.remaining_records > 0) {
+		// WARNING: token in header may expire, may be worth having a refresh token method
+		let newErroredRecords = await upsertSyncedObjects(user, syncId, integration, recordResponse.paging.cursor);
+		erroredRecords = erroredRecords.concat(newErroredRecords);
+	}
+	return erroredRecords;
+}
+
+
+const sendSyncToWorker = async (userId: string, syncTrigger: Activity) => {
+	// HACK: for multiple syncs, a better way to get sync id may be 
+	// to use the synced_at field if it refers to the initial sync
+	const jwt = await signJwt(userId);
+	if (!process.env.SYNC_BACKGROUND_WORKER_URL) {
+		console.error("[WEBHOOK] set SYNC_BACKGROUND_WORKER_URL");
+		return Response.json({
+			message: `no sync background worker`
+		});
+	}
+	const workerRequest = await fetch(process.env.SYNC_BACKGROUND_WORKER_URL, {
+		method: "POST",
+		headers: { Authorization: `Bearer ${jwt}` },
+		body: JSON.stringify(syncTrigger),
+	});
+	const workerResponse = await workerRequest.json();
+	return workerResponse
 }
 
 const signJwt = async (userId: string): Promise<string> => {

@@ -86,7 +86,6 @@ function IntegrationTile({
         data: {
           model: "File",
           synced_at: new Date().toISOString(),
-          num_records: 3921
         }
       }),
     });

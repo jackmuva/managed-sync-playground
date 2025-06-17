@@ -3,27 +3,24 @@ import { Button } from "../ui/button";
 import { SyncedObject } from "@/db/schema"
 import { useState } from "react";
 
-interface ObjectPermissions {
-  users: Array<any>
-};
-
-export const SyncedObjectDropdown = ({ syncedObject, session }: { syncedObject: SyncedObject, session: { user: any, paragonUserToken?: string } }) => {
-  const [permissionsState, setPermissionsState] = useState<{ data: ObjectPermissions | null, isLoading: boolean }>({ data: null, isLoading: false });
+export const SyncedObjectDropdown = ({ syncedObject, source }: { syncedObject: SyncedObject, source: string }) => {
+  const [permissionsState, setPermissionsState] = useState<{ data: any | null, isLoading: boolean }>({ data: null, isLoading: false });
 
   const checkPermissions = async () => {
-    const request = await fetch("http://localhost:4000/permissions/list-users", {
+    const request = await fetch(`${window.location.href}/api/permissions-check`, {
       method: "POST",
       body: JSON.stringify({
-        object: syncedObject.id,
+        object: syncedObject,
+        source: source,
         role: "reader"
       }),
       headers: {
-        "Authorization": `Bearer ${session?.paragonUserToken}`,
         "Content-Type": "application/json",
       },
     });
     const response = await request.json();
-    setPermissionsState(response);
+    console.log(response);
+    setPermissionsState((prev) => ({ ...prev, data: response.data }));
   }
 
   return (
@@ -59,7 +56,7 @@ export const SyncedObjectDropdown = ({ syncedObject, session }: { syncedObject: 
                 </div>
               ) : (
                 <>
-                  {formatJson(permissionsState.data?.toString() ?? "{\"users\": [{\"email\":\"playground.local-static-user\"}]}")}
+                  {formatJson(permissionsState.data ?? "")}
                 </>
               )
               }

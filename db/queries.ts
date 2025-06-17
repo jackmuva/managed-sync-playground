@@ -192,7 +192,7 @@ export async function createSyncedObject({
       source: source
     });
   } catch (error) {
-    console.error("Failed to create/update synced object in database");
+    console.error("Failed to create/update synced object in database: ", error);
     throw error;
   }
 }
