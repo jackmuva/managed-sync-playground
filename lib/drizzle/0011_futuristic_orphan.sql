@@ -1,1 +1,0 @@
-ALTER TABLE `SyncedObject` ADD `syncObjectId` text NOT NULL;
