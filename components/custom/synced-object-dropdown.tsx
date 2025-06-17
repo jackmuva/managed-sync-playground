@@ -7,7 +7,7 @@ export const SyncedObjectDropdown = ({ syncedObject, source }: { syncedObject: S
   const [permissionsState, setPermissionsState] = useState<{ data: any | null, isLoading: boolean }>({ data: null, isLoading: false });
 
   const checkPermissions = async () => {
-    const request = await fetch(`${window.location.href}/api/permissions-check`, {
+    const request = await fetch(`${window.location.origin}/api/permissions-check`, {
       method: "POST",
       body: JSON.stringify({
         object: syncedObject,

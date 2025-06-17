@@ -22,7 +22,7 @@ export const ActivityLogView = ({ session, selectedSource }: { session: { user: 
 
 
   return (
-    <div className="py-3">
+    <div className="overflow-y-scroll h-full py-3">
       <table className="w-full text-sm table-fixed overflow-y-scroll">
         <thead className="border-b bg-muted">
           <tr>

@@ -23,7 +23,7 @@ export function SyncedObjectsView({ session, selectedSource }: { session: { user
 
 
   return (
-    <div className="py-3">
+    <div className="overflow-y-scroll h-full py-3">
       {isLoading ? (
         <div className="flex flex-col">
           {[44, 32, 28, 52].map((item) => (
