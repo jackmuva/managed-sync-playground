@@ -96,7 +96,7 @@ function IntegrationTile({
     const res = await req.json();
     if (res) {
       mutate(`/api/records/?source=${integration}`)
-      toast(`Metadata Pulled: ${formatJson(res)} - Background job is indexing the vector database. Data will be usable in a few minutes`);
+      toast(`Metadata Pulled - Background job is indexing the vector database. Data will be usable in a few minutes`);
     }
   }
 
