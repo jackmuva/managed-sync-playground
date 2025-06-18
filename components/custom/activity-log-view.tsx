@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { ActivityDropdown } from "./activity-dropdown";
 
-export const ActivityLogView = ({ session, selectedSource }: { session: { user: any, paragonUserToken?: string }, selectedSource: { name: string, type: string, icon: string | undefined } }) => {
+export const ActivityLogView = ({ session, selectedSource, }: { session: { user: any, paragonUserToken?: string }, selectedSource: { name: string, type: string, icon: string | undefined }, }) => {
   const [expandedRow, setExpandedRows] = useState<Set<string>>(new Set());
   const { data: activities, isLoading, } = useSWR<Array<Activity>>(session ? `/api/activity/?source=${selectedSource.type}` : null,
     fetcher, { fallbackData: [] });
@@ -19,7 +19,6 @@ export const ActivityLogView = ({ session, selectedSource }: { session: { user: 
     }
     setExpandedRows(newExpandedRows);
   }
-
 
   return (
     <div className="overflow-y-scroll h-full py-3">

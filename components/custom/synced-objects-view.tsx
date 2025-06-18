@@ -6,7 +6,7 @@ import { SyncedObject } from "@/db/schema";
 import { ChevronDown } from "lucide-react";
 import { SyncedObjectDropdown } from "./synced-object-dropdown";
 
-export function SyncedObjectsView({ session, selectedSource }: { session: { user: any, paragonUserToken?: string }, selectedSource: { name: string, type: string, icon: string | undefined } }) {
+export function SyncedObjectsView({ session, selectedSource, }: { session: { user: any, paragonUserToken?: string }, selectedSource: { name: string, type: string, icon: string | undefined }, }) {
   const [expandedRow, setExpandedRows] = useState<Set<string>>(new Set());
   const { data: syncedObjects, isLoading, } = useSWR<Array<SyncedObject>>(session ? `/api/records/?source=${selectedSource.type}` : null,
     fetcher, { fallbackData: [] });

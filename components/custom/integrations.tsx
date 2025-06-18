@@ -10,6 +10,7 @@ import { FunctionTool } from "@/app/(chat)/api/chat/route";
 import { toast } from "sonner";
 import { formatJson } from "@/lib/utils";
 import { ArrowBigDownDash, SquareActivity, Zap } from "lucide-react";
+import { mutate } from "swr";
 
 type IntegrationTileProps = {
   integration: {
@@ -67,7 +68,10 @@ function IntegrationTile({
       },
     });
     const res = await req.json();
-    toast(`Sync Pipeline for ${integration}: ${res.message}`);
+    if (res) {
+      mutate(`/api/activity/?source=${integration}`)
+      toast(`Sync Pipeline for ${integration}: ${res.message}`);
+    }
   }
 
   const triggerDataPullWebhook = async (integration: string): Promise<void> => {
@@ -90,8 +94,10 @@ function IntegrationTile({
       }),
     });
     const res = await req.json();
-
-    toast(`Data Pull Success: ${formatJson(res)}`);
+    if (res) {
+      mutate(`/api/records/?source=${integration}`)
+      toast(`Data Pull Success: ${formatJson(res)}`);
+    }
   }
 
 
@@ -203,7 +209,7 @@ export default function Integrations({
   initialToolsSelected,
   onUpdateTools,
   onUpdateActions,
-  setSelectedSourceAction
+  setSelectedSourceAction,
 }: {
   session: { paragonUserToken?: string };
   setSelectedSourceAction: (source: { name: string, type: string, icon: string }) => void;
