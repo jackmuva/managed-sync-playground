@@ -61,11 +61,10 @@ export async function POST(request: NextRequest) {
 			});
 		}
 
-		const workerResponse = await sendSyncToWorker(body.user.id, syncTrigger[0]);
-		const upsertResponse = await upsertSyncedObjects(body.user.id, syncTrigger[0].syncId ?? "", body.sync);
-		console.log(workerResponse);
-		console.log(upsertResponse);
-		return Response.json({ worker: workerResponse, metadata: upsertResponse });
+		await sendSyncToWorker(body.user.id, syncTrigger[0]);
+		await upsertSyncedObjects(body.user.id, syncTrigger[0].syncId ?? "", body.sync);
+		//return Response.json({ worker: workerResponse, metadata: upsertResponse });
+		return Response.json({ trigger: "triggered" });
 	} catch (error) {
 		console.error("[WEBHOOK] failed to send to worker");
 		throw error;
