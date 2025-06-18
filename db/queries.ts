@@ -179,18 +179,7 @@ export async function createSyncedObject({
   data: string,
   source: string
 }) {
-  const selectedSyncedObject = await db.select().from(syncedObject).where(eq(syncedObject.syncObjectId, syncObjectId));
   try {
-    if (selectedSyncedObject.length > 0) {
-      return await db
-        .update(syncedObject)
-        .set({
-          data: data,
-          updatedAt: updatedAt
-        })
-        .where(eq(syncedObject.syncObjectId, syncObjectId));
-    }
-
     return await db.insert(syncedObject).values({
       syncObjectId: syncObjectId,
       externalId: externalId,

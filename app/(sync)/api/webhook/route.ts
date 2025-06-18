@@ -61,9 +61,7 @@ export async function POST(request: NextRequest) {
 			});
 		}
 
-		console.log('upserting...');
 		const upsertResponse = await upsertSyncedObjects(body.user.id, syncTrigger[0].syncId ?? "", body.sync);
-		console.log(upsertResponse);
 		sendSyncToWorker(body.user.id, syncTrigger[0]);
 		setTimeout(() => {
 			console.log('returning');
