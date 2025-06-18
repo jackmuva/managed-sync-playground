@@ -8,11 +8,10 @@ require('dotenv').config();
 
 import { user, chat, User, SyncedObject, syncedObject, activity, Activity } from "./schema";
 
-//HACK:make this logic more friendly for local runs without turso env vars
 let db = drizzle(
   createClient({
-    url: process.env.TURSO_DATABASE_URL!,
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    url: process.env.TURSO_DATABASE_URL ?? "libsql://no-database",
+    authToken: process.env.TURSO_AUTH_TOKEN ?? "",
   })
 )
 if (process.env.LOCAL_DB === 'true') {
