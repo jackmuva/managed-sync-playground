@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
 				message: `could not find trigger by this source: ${body.sync}`
 			});
 		}
+		console.log(body);
 
 		const request = await fetch(`${process.env.MANAGED_SYNC_URL}/permissions/${syncTrigger[0].syncId}/list-users`, {
 			method: "POST",
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				object: `${body.source}_file:${body.data.id}`,
+				object: `${body.data.id}`,
 				role: body.role,
 			}),
 		});
